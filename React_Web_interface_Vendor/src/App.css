@@ -1,0 +1,31 @@
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  gap: 1.5rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8fafc, #ecfeff);
+}
+
+.hero-card,
+.panel {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 0.8rem;
+  color: #0f766e;
+  font-weight: 700;
+}
+
+.panel ul {
+  padding-left: 1rem;
+}
+
+.panel li {
+  margin-bottom: 0.75rem;
+}
