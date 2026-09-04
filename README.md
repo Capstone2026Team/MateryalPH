@@ -14,17 +14,17 @@ This workspace contains:
 ## Prerequisites
 
 - PHP 8.2+
+- laravel 13
 - Node.js 18+
 - Flutter SDK
-- Docker & Docker Compose
 - PostgreSQL with PostGIS
 
 ## Quick Start
 
-### 1. Start PostgreSQL with PostGIS
+### 1. Start PostgreSQL, ( Database)
 
 ```bash
-docker compose up -d
+"C:\Program Files\PostgreSQL\18\bin\psql.exe" -h 127.0.0.1 -p 5432 -U materyalph_app -d materyalph
 ```
 
 ### 2. Start the Laravel API
@@ -62,3 +62,14 @@ flutter run
 
 - **Health Check**: http://127.0.0.1:8000/api/health
 - **Products**: http://127.0.0.1:8000/api/products
+
+## Database Test
+
+- **psql Test**:
+```bash
+psql -h 127.0.0.1 -p 5432 -U materyalph_app -d materyalph
+```
+
+```bash
+Test-Path "C:\Program Files\PostgreSQL\18\bin\psql.exe"
+```
