@@ -1,0 +1,8 @@
+{
+  "APP_ENV": "development",
+  "API_BASE_URL": "http://10.0.2.2:8080/api/v1",
+  "GOOGLE_OIDC_CLIENT_ID": "",
+  "GOOGLE_OIDC_SERVER_CLIENT_ID": "",
+  "SENTRY_DSN": "",
+  "RECAPTCHA_SITE_KEY": ""
+}

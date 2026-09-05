@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info:
+  title: MateryalPH API
+  version: 0.0.0
+  description: >-
+    Repository-foundation contract. Paths are added together with implemented
+    use cases so the Laravel API and generated TypeScript/Dart clients cannot drift.
+servers:
+  - url: /api/v1
+    description: Versioned MateryalPH API base path
+paths:
+  /health:
+    get:
+      operationId: getApiHealth
+      summary: Read the scaffold API health status
+      tags: [System]
+      responses:
+        "200":
+          description: API process is available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      additionalProperties: false
+      required: [status, service, timestamp]
+      properties:
+        status:
+          type: string
+          const: ok
+        service:
+          type: string
+        timestamp:
+          type: string
+          format: date-time

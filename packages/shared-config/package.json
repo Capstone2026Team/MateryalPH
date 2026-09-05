@@ -1,0 +1,6 @@
+{
+  "name": "@materyalph/shared-config",
+  "private": true,
+  "version": "0.0.0",
+  "files": ["tsconfig.react.json"]
+}

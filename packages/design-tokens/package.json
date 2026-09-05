@@ -1,0 +1,13 @@
+{
+  "name": "@materyalph/design-tokens",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./web.css": "./web.css"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check"
+  }
+}
