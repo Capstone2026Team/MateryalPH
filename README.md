@@ -13,7 +13,7 @@ This workspace contains:
 
 ## Prerequisites
 
-- PHP 8.2+
+- PHP 8.4+
 - laravel 13
 - Node.js 18+
 - Flutter SDK
