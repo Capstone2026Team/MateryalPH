@@ -1,0 +1,61 @@
+# Environment files
+.env
+.env.*
+!.env.example
+!**/.env.example
+!**/*.example.json
+!**/*.example.properties
+!**/*.example.xcconfig
+
+# Flutter environment and signing
+apps/buyer-mobile/config/development.json
+apps/buyer-mobile/config/staging.json
+apps/buyer-mobile/config/production.json
+apps/buyer-mobile/android/secrets.properties
+apps/buyer-mobile/android/key.properties
+apps/buyer-mobile/android/app/google-services.json
+apps/buyer-mobile/ios/Runner/GoogleService-Info.plist
+apps/buyer-mobile/ios/Flutter/*.xcconfig.local
+*.jks
+*.keystore
+*.p12
+*.mobileprovision
+
+# OAuth and service-account material
+services/api/storage/oauth-private.key
+services/api/storage/oauth-public.key
+**/*service-account*.json
+**/credentials*.json
+
+# Dependency/build output
+services/api/vendor/
+apps/*/node_modules/
+apps/*/dist/
+apps/buyer-mobile/.dart_tool/
+apps/buyer-mobile/build/
+
+# Local runtime data
+services/api/storage/logs/*.log
+.idea/
+.vscode/settings.local.json
+
+# impeccable-ignore-start
+# Ephemeral design-review output, runtime state, and per-developer overrides.
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json
+.impeccable/*.png
+.impeccable/review/
+.impeccable/questions/
+.impeccable/live/server.json
+.impeccable/live/sessions/
+.impeccable/live/previews/
+.impeccable/live/annotations/
+.impeccable/live/cache/
+.impeccable/live/manual-edit-apply-transaction.json
+.impeccable/live/manual-edit-events.jsonl
+.impeccable/live/manual-edit-evidence/
+.impeccable/live/pending-manual-edits.json
+.impeccable/live/deferred-svelte-component-accepts.json
+.impeccable/live/*.png
+# impeccable-ignore-end
