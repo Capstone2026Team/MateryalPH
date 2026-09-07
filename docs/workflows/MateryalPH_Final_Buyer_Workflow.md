@@ -8,6 +8,10 @@ MateryalPH provides a dedicated **mobile application** for Buyers. The Buyer app
 
 The System Workflow is the authoritative source for shared security, state, scoring, payment, privacy, accessibility, audit, and integration rules. This Buyer Workflow defines how those rules are presented to and used by the Buyer.
 
+**Approved capstone operating basis — 5 September 2026.** MateryalPH is an academic prototype, not an asserted BIR-registered operating business. All Xendit integrations use TEST credentials and test accounts. Every payment screen, financial report, certificate preview and billing statement carries **DEMO — No real funds or BIR filing**. A successful test webhook demonstrates provider integration; it does not prove real collection, statutory withholding, remittance to the BIR, or government approval. Physical-payment demonstrations record simulated cash handover to the Vendor. Seeded identities and tax documents are conspicuously fictional and must never be submitted to regulators or used to represent a real business as verified.
+
+The approved commercial design uses a **2% Vendor-paid commission on completed materials value after discounts and excluding materials VAT**, billed monthly for Online, COD and In-Store orders. The fee is distinct from Buyer-paid processor charges and Vendor withholding. No subscription or listing charge applies. The System Workflow's controls `FIN-01` through `FIN-12` are authoritative for calculation and implementation; the other workflows apply them within their existing screens. The production withholding entity is **UNCONFIRMED**. Test scenarios may simulate either responsibility path, but no Admin toggle can establish a real legal allocation or enable live money movement.
+
 The term **Buyer** includes an SME contractor, independent builder, or DIY builder. Existing Buyers use **Sign In**. New Buyers use **Sign Up**. Vendor and Admin accounts use their respective web portals and cannot be created from the Buyer application.
 
 ---
@@ -73,9 +77,23 @@ Every page implements `loading`, `content`, `empty`, `recoverable error`, `offli
 
 **Explore Materials Catalog**
 
-- **Design.** Explore shows the active-location indicator, search field, categories, recently viewed products, Favorite Suppliers, recommended eligible listings, filters, sorting, notifications, and Cart. Categories use the controlled platform taxonomy: Cement and Concrete; Roofing Materials; Formwork and Scaffolding; Wood and Lumber; Landscaping and Exterior; Steel and Reinforcement; Tools and Accessories; Masonry; Insulation and Waterproofing; Aggregates; Hardware and Fasteners; Electrical Materials; Drainage and Septic Materials; Plumbing Materials; Construction Chemicals; Wall and Ceiling Materials; Sanitary Fixtures; Paints and Finishes; Doors, Windows, and Glass; Flooring Materials; HVAC Materials; Fire Protection Materials; Adhesives and Sealants; and Other.
+- **Design.** Explore shows the active-location indicator, search field, the MAT-01 dashboard above the category list with **Nearby Verified Vendors**, **Available Products** and **View Materials Analytics**, categories, recently viewed products, Favorite Suppliers, recommended eligible listings, filters, sorting, notifications, and Cart. Categories use the controlled platform taxonomy: Cement and Concrete; Roofing Materials; Formwork and Scaffolding; Wood and Lumber; Landscaping and Exterior; Steel and Reinforcement; Tools and Accessories; Masonry; Insulation and Waterproofing; Aggregates; Hardware and Fasteners; Electrical Materials; Drainage and Septic Materials; Plumbing Materials; Construction Chemicals; Wall and Ceiling Materials; Sanitary Fixtures; Paints and Finishes; Doors, Windows, and Glass; Flooring Materials; HVAC Materials; Fire Protection Materials; Adhesives and Sealants; and Other.
 - **Flow.** Selecting a category applies it to active Tier 2 listings inside the chosen radius. Search opens Search Results; a listing opens Product Details; the tune shortcut opens Item-Based ranking preferences. Reset restores current platform defaults.
 - **Logic.** Catalog browsing defaults to distance, while text search defaults to SRS Best Deal. Only active and serviceable Tier 2 listings are purchasable. Stale or unavailable listings remain excluded even if a cached card is visible.
+
+**Materials Analytics within Explore**
+
+- **Design.** Show the inherited location/radius, category/search controls, daily-update timestamp, 7/30/90-day and custom-date filters, and a categorized list of comparable material variants. Each row shows material/specification, PHP per canonical unit, daily average, comparison dates and percentage/direction when eligible, current offering-Vendor count and View Details. Never display a blended average across incompatible variants. Dashboard counts use current MAT-02 eligibility and explicitly count Vendor listings, not variants; history has its own as-of timestamp.
+- **Flow.** View Materials Analytics opens the list without changing the selected radius. Category/search narrows the analytics rows; changing dates reloads recorded averages and graph periods. A confirmed radius change reloads both current and historical scope. Selecting a material opens Material Price Details; Back restores list filters and scroll. Project-origin navigation explicitly labels the Project site.
+- **Logic.** Apply MAT-01–MAT-07 exclusively to public Tier 2 listed prices. Live current counts and daily historical averages may differ in time and must be labeled. Unmapped products show Not Yet Comparable. One-Vendor averages show Limited Local Data; percentage trends require at least two Vendors at each exact endpoint. Missing observations remain gaps. Filters cannot introduce Tier 1 or negotiated/completed-sale prices. TEST fixtures show DEMO — Simulated Marketplace Data.
+
+**Material Price Details within Materials Analytics**
+
+- **Design.** Present canonical material name, description, brand/model and technical specifications, unit, equivalent-variant selector, average as-of date, current seller count, price-change summary and daily line graph with an accessible table. Under each variant show its own average and the current eligible offers with store name, public price/availability, distance and View Product. Material information is a taxonomy summary; Vendor-specific images or claims remain attributed to the selected listing. Historical dates do not turn current offer cards into historical quotations.
+- **Flow.** Selecting a comparable variant updates its graph, average and offer list. Selecting a Vendor offer opens the existing Product Details for that listing/variant, where the Buyer may message, select fulfillment or add to Cart. If the offer has become unavailable, show the updated state and return to remaining eligible offers. Historical-only materials retain the graph with No Current Offers and no purchase shortcut.
+- **Logic.** Follow MAT-03 normalization, MAT-04 exact-date percentage calculation and MAT-05 Buyer serialization. Averages include applicable materials VAT and exclude delivery/processing/commission/CWT. Planning estimates are advisory materials-only amounts; actual order quantities, price, VAT, delivery, processing and stock are revalidated under FIN-02. Do not change a Project budget or accept an order from a graph value.
+
+Both new page flows inherit the existing loading/error/offline/permission, focus, text scaling, reduced-motion and security requirements. The chart has labeled dates and units, a textual change direction, keyboard/screen-reader-accessible data and no fabricated line across a missing day.
 
 **Search Results**
 
@@ -103,9 +121,11 @@ Every page implements `loading`, `content`, `empty`, `recoverable error`, `offli
 
 **Checkout**
 
-- **Design.** Checkout is a review sequence for delivery/pickup details, contact, Vendor-group totals, payment method, NRPC where proposed, Terms, and final submission. Each child order shows Materials Subtotal, Delivery Fee, NRPC included within the order value, Payment Processing Fee, Amount Due Now, Remaining Physical-Payment Balance where applicable, and Total.
+- **Design.** Checkout is a review sequence for delivery/pickup details, contact, Vendor-group totals, payment method, NRPC where proposed, Terms, and final submission. Each child order shows Materials Subtotal after discounts, included VAT where applicable, Delivery Fee, NRPC included within the order value, Payment Processing Fee, Amount Due Now, Remaining Physical-Payment Balance where applicable, and Total. The breakdown states whether prices include VAT or the Vendor is non-VAT and never adds VAT twice. Vendor commission and CWT are not Buyer checkout charges.
 - **Flow.** A normal cart submits Vendor confirmation requests. An accepted quotation enters checkout from its latest version. The Buyer explicitly accepts every revision and NRPC Terms before payment. Online payments open the authorized Xendit action and return to a pending-status page; redirects never independently mark payment successful.
 - **Logic.** The backend revalidates quotation version, inventory reservation, address, fulfillment method, payment channel, fee, and expiry. Online payment and an NRPC assurance payment expire after 45 minutes, with exact Asia/Manila time and countdown displayed. An expired attempt releases applicable reservations and offers a safe retry only when the commercial snapshot remains valid.
+
+The shared FIN-02 breakdown is authoritative: full Online payment is `M + D + F`; direct COD/In-Store is `M + D`; an NRPC physical-payment order pays `N + F` online and leaves `M + D − N` payable directly to the Vendor. NRPC is counted once; its processor charge is not credited as material principal. A tax/profile change affecting the payable amount requires a fresh Vendor-approved snapshot and Buyer acceptance. Withholding is assessed separately at remittance and cannot change an accepted Buyer total. All demo payment controls state **TEST — no real charge**.
 
 **Projects**
 
@@ -143,6 +163,8 @@ Every page implements `loading`, `content`, `empty`, `recoverable error`, `offli
 - **Flow.** Available actions are calculated from server state. The Buyer may pay, approve a revision, accept NRPC, message the Vendor, request a permitted cancellation, view proof, confirm receipt, report an issue, rate, or request an invoice.
 - **Logic.** NRPC is identified as part of—not an addition to—the agreed order value. For COD or In-Store Payment, Amount Paid Online and Remaining Balance are shown separately. Records from older quotation or order versions remain read-only.
 
+Order Details additionally displays the original included VAT/discount allocations, online principal paid, processor fees paid, physical amount recorded, remaining obligation and each refund allocation. It never represents a Vendor-entered cash receipt as Xendit verification. A cash record may be acknowledged or disputed by the Buyer, with the original recorder/time retained. Internal Vendor fee bills and private tax certificates are not exposed to the Buyer.
+
 **Review**
 
 - **Design.** Verified-purchase Vendor and product rating forms are separate. The page shows eligibility, submission deadline, rating criteria, optional comment, media rules, and the privacy-safe public identity that will appear.
@@ -154,6 +176,8 @@ Every page implements `loading`, `content`, `empty`, `recoverable error`, `offli
 - **Design.** The page shows the current state, whether cancellation is available, reason selector, explanation, financial-impact preview, NRPC evidence status where applicable, refund estimate, and confirmation. Unavailable cancellation is replaced by Report a Problem or Dispute guidance.
 - **Flow.** Before Vendor confirmation, the Buyer may withdraw the request. From `CONFIRMED` through `PROCESSING`, the Buyer submits a valid reason. The system or authorized reviewer finalizes the result. Cancellation is unavailable at `READY_FOR_PICKUP` or `OUT_FOR_DELIVERY`, although statutory remedies and dispute reporting remain available.
 - **Logic.** A finalized paid cancellation automatically initiates the cancellation refund. Vendor-caused cancellation returns all Buyer-paid order amounts and forfeits NRPC. Eligible Buyer cancellation during `PROCESSING` may retain the accepted, substantiated NRPC. The preview is recalculated server-side before confirmation.
+
+The refund preview uses original paid amounts and earlier refunds. It does not deduct Vendor CWT or platform commission. An approved refund creates a separate timeline for each original online payment and any required Vendor cash reimbursement. A balance never collected is shown as **No longer due**, not **Refunded**. A pending tax correction does not turn into a smaller Buyer entitlement.
 
 **Return or Refund Request**
 
@@ -199,8 +223,8 @@ Every page implements `loading`, `content`, `empty`, `recoverable error`, `offli
 
 **Invoice Request**
 
-- **Design.** Eligible orders show Vendor, Order ID, completion date, amount, existing invoice files, request status, business-name/TIN fields needed by the Vendor, and secure download actions.
-- **Flow.** The Buyer confirms invoice details and submits. The Vendor uploads the BIR-compliant invoice produced by its registered system; the Buyer receives a notification and may request correction with a reason.
+- **Design.** Orders with invoice records show Vendor, Order ID, invoice date, amount, included VAT/category where applicable, existing invoice files, copy/correction request status, necessary billing details, and secure download actions. Invoice access is not restricted to completed orders when an invoice has already been issued. Optional business TIN details are collected only for the invoice purpose and are not required for ordinary browsing.
+- **Flow.** The Buyer supplies needed invoice details before issuance where available, views the Vendor-issued document once uploaded, or requests a copy/correction. Vendor issuance follows its legal timing and does not depend on the Buyer first requesting an invoice. The demo supplies labeled sample documents; production documents originate from the Vendor's registered process.
 - **Logic.** MateryalPH generates only the request and records. It does not label its Purchase Order or payment confirmation as the Vendor's tax invoice. Access remains limited to the Buyer, Vendor, and authorized Admin roles.
 
 **Profile and Settings**
@@ -341,6 +365,8 @@ The online-payment breakdown separately displays the Payment Processing Fee. Sup
 
 The Buyer accepts the current Terms version, cancellation and refund conditions, fulfillment commitment, processing-fee treatment, Work Package scope, latest quotation version where applicable, and any NRPC Terms before payment. Acceptance is versioned and timestamped. For COD or In-Store Payment with NRPC, the Buyer pays the accepted NRPC online within 45 minutes; that amount is credited against the later physical-payment balance.
 
+Project-Based and Item-Based checkout use the same FIN-02 financial snapshot. Comparison totals and budget checks include Buyer-payable materials VAT, delivery and the estimated or confirmed Buyer processing fee, with its estimate status visible. They never add the Vendor-paid 2% commission or merchant withholding. A processor fee unavailable until channel selection is identified as pending, and the full payable total is presented before acceptance. Counter-offers cannot request an unsupported tax exemption or override validated tax fields.
+
 ## 6. Purchase Order Generation and Vendor Confirmation
 
 The system creates the Purchase Order after the Vendor confirms and the Buyer accepts the final package. It contains:
@@ -379,15 +405,17 @@ Material traceability fields are required only when applicable to the category, 
 | Total Approved Budget | Buyer-defined project ceiling |
 | Allocated to Work Packages | Sum of active work-package budgets |
 | Unallocated Reserve | Project budget less allocations |
-| Committed Spend | Confirmed Purchase Orders not canceled or refunded |
+| Committed Spend | Pending Spend + Actual Spend + Cancelled-order Paid Amount Awaiting Refund; a summary, not another deduction |
 | Pending Spend | Confirmed orders not yet completed |
-| Actual Spend | Completed orders after refund adjustments |
-| Remaining Balance | Budget less committed and actual applicable spend |
+| Actual Spend | Completed-order Buyer cost net of successful refunds, plus legally retained cancellation costs |
+| Remaining Balance | Budget less Committed Spend; never subtract Actual Spend again |
 | Budget Utilization | Percentage of budget committed or spent |
 
 ### Work Package-Level View
 
 The work-package view adds planned versus current cost, confirmed missing-item cost, linked Item-Based orders, pending Vendor-confirmation count, refund adjustments, and override history.
+
+Budget totals follow FIN-11. Use disjoint buckets: Pending Spend for confirmed incomplete orders; Actual Spend for completed orders net of successful refunds plus legally retained cancellation costs; and Cancelled-order Paid Amount Awaiting Refund for paid principal/fees awaiting recovery. `Committed Spend = Pending Spend + Actual Spend + Cancelled-order Paid Amount Awaiting Refund`; `Remaining Balance = Budget − Committed Spend`. On cancellation release only the unpaid obligation, move retained costs into Actual Spend and keep refundable collected amounts encumbered until successful refund or evidenced cash reimbursement. Never count a child order or NRPC principal twice. Withholding, Vendor commission and Vendor service-bill payments never change Buyer budget amounts.
 
 ### Budget Alert System
 
@@ -399,7 +427,7 @@ After completion, the Buyer may rate the Vendor and purchased products for 14 ca
 
 A return or dispute may be filed within seven calendar days after completion for an eligible wrong, defective, incomplete, misleading, late, missing, payment, or fulfillment issue. Evidence is attached to the case. A rating connected to an active case may be withheld until resolution.
 
-The Buyer may request a Vendor invoice from an eligible completed order. MateryalPH records the request and allows the Vendor to upload the BIR-compliant PDF produced by its registered invoicing system. MateryalPH's Purchase Order and payment confirmation are not tax invoices. The configured service target is three business days after the request and does not replace any earlier legal invoicing obligation of the Vendor.
+The Buyer may view an already issued Vendor invoice or request a copy/correction through the order record. Issuance is the Vendor's duty at the legally required time and does not wait for completion. The three-business-day response target is for the requested document service and never extends that legal duty. Purchase Orders and payment confirmations are not tax invoices. TEST files are labeled samples; FIN-09 governs invoice provenance, reconciliation and electronic-invoicing coverage.
 
 When all work packages are resolved, the Buyer may mark the project Completed and export a Procurement Summary Report containing budgets, Purchase Orders, Vendor records, fulfillment states, invoice references, refunds, and override history.
 
@@ -426,17 +454,18 @@ MateryalPH charges no standard cancellation fee. NRPC is a Vendor-determined por
 
 For online payment, NRPC is tagged within the paid total. For COD or In-Store Payment, NRPC is paid online within 45 minutes and credited against the physical-payment balance. When an eligible Buyer cancellation becomes final during `PROCESSING`, the accepted NRPC may be retained only when the Vendor substantiates the preparation. Vendor cancellation forfeits NRPC and results in a full refund of Buyer-paid order amounts. NRPC cannot reduce a remedy for defective, incorrect, unsafe, misrepresented, or otherwise nonconforming goods or Vendor fault.
 
-Refunds follow two independent paths. A finalized cancellation of an already-paid order automatically initiates an idempotent **Cancellation Refund**. A dispute remains `DISPUTE_OPEN`; only a concluded decision awarding money initiates a **Dispute-Conclusion Refund**. Both return funds to the original payment method where supported, record `REFUND_PENDING`, and wait for the verified Xendit refund webhook before recording `PARTIALLY_REFUNDED`, `REFUNDED`, or `REFUND_FAILED`. A failed or expired payment for which no funds were captured requires no refund. If reconciliation proves capture after a failed application flow, the system creates a compensating refund.
+Refunds follow two independent paths. A finalized cancellation of an already-paid order automatically initiates an idempotent **Cancellation Refund**. A dispute remains `DISPUTE_OPEN`; only a concluded decision awarding money initiates a **Dispute-Conclusion Refund**. For their online portions, both return funds to the original payment method where supported, record `REFUND_PENDING`, and wait for verified provider evidence before recording `PARTIALLY_REFUNDED`, `REFUNDED`, or `REFUND_FAILED`. Any physical portion follows the separate Vendor reimbursement process in FIN-07 and does not wait for a Xendit webhook. A failed or expired payment for which no funds were captured requires no refund. If reconciliation proves capture after a failed application flow, the system creates a compensating refund.
 
 When the Buyer prevails because of Vendor fault, the intended remedy makes the Buyer whole, including the accepted NRPC and disclosed processing fee, subject to the technically supported route. For a Buyer-requested cancellation without Vendor fault, a nonreturnable payment-processing fee may be excluded only if clearly disclosed and legally permitted. The Buyer sees the masked original payment method, refund amount, reason, reference, state, and channel-dependent arrival information. The interface never asks the Buyer to redirect a Xendit refund to another destination. Admins never manually hold or disburse funds.
+
+Under FIN-07, a cash reimbursement has its own Vendor action/evidence and Buyer confirmation, while the original online NRPC payment uses the supported Refund API. No refund is claimed for an unpaid cash balance. The demo clearly labels simulated reimbursement; a real or test provider failure remains visible with support/escalation and no false completion. Vendor commission and tax adjustments occur separately and are not charged to the Buyer.
 
 ---
 
 **Price Monitoring Implementation in the System**
 
-The **Price Trend Insight** records normalized active listing-price snapshots and completed transaction prices, including completed orders originating from accepted chat quotations, with Vendor, unit, variant, selected radius, and timestamp. Draft, rejected, expired, withdrawn, or otherwise unaccepted quotation prices are excluded because they are not completed market transactions. The system calculates 7-day and 30-day comparable averages and identifies current prices as below, within, or above the defined comparison band. It displays increasing, decreasing, or stable direction only when sufficient comparable observations exist; otherwise it shows **Insufficient Local Data**.
+The **Price Trend Insight** is the Materials Analytics feature specified by MAT-01–MAT-07 in the System Workflow. Its daily history uses ordinary, comparable, VAT-inclusive public Tier 2 listing prices with equal Vendor weighting. Completed-sale and negotiated quotation prices remain separate operational records and do not contribute to this public average. Buyer location/radius, variant/unit, endpoint dates, sample counts, dataset and last successful capture are always visible. A chart is a planning estimate, not an official market price or accepted quotation. Historical records remain reproducible and cannot rewrite Purchase Orders.
 
-Comparisons must normalize unit and variant, exclude canceled or test transactions, and avoid representing the result as an official market price. Historical changes remain auditable and do not rewrite past Purchase Orders.
 
 ---
 
@@ -469,6 +498,8 @@ The Buyer selects an eligible order and completes the structured Refund/Dispute 
 Possible outcomes include Dismissed, Replacement, Full Refund, Partial Refund, Warning, Score Adjustment through the applicable metric, Temporary Restriction, Suspension, or Permanent Ban. A concluded Full Refund or Partial Refund decision initiates the separate Dispute-Conclusion Refund and links it to the Case ID. All deadlines use Asia/Manila time and are shown in the interface. The Buyer can view the case state, evidence history, messages, decision reason, refund state, expected arrival information, and appeal state.
 
 ---
+
+The financial source register, calculations, worked examples and acceptance cases are in FIN-01–FIN-12 of [the System Workflow](MateryalPH_Final_System_Workflow.md). Buyer screens present those results through the existing page structure and accessible Design, Flow and Logic patterns. The capstone does not submit tax returns, issue official Vendor invoices or claim production compliance.
 
 ### Future Enhancements
 

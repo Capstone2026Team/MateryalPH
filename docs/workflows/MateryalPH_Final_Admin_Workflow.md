@@ -12,6 +12,10 @@ The Admin Portal does not provide public registration. A Buyer or Vendor account
 
 ---
 
+**Approved capstone operating basis — 5 September 2026.** MateryalPH is an academic prototype, not an asserted BIR-registered operating business. All Xendit integrations use TEST credentials and test accounts. Every payment screen, financial report, certificate preview and billing statement carries **DEMO — No real funds or BIR filing**. A successful test webhook demonstrates provider integration; it does not prove real collection, statutory withholding, remittance to the BIR, or government approval. Physical-payment demonstrations record simulated cash handover to the Vendor. Seeded identities and tax documents are conspicuously fictional and must never be submitted to regulators or used to represent a real business as verified.
+
+The approved commercial design uses a **2% Vendor-paid commission on completed materials value after discounts and excluding materials VAT**, billed monthly for Online, COD and In-Store orders. The fee is distinct from Buyer-paid processor charges and Vendor withholding. No subscription or listing charge applies. The System Workflow's controls `FIN-01` through `FIN-12` are authoritative for calculation and implementation; the other workflows apply them within their existing screens. The production withholding entity is **UNCONFIRMED**. Test scenarios may simulate either responsibility path, but no Admin toggle can establish a real legal allocation or enable live money movement.
+
 ### Admin Sign-in
 
 Administrators sign in using an internally issued email/password account and mandatory authenticator-app TOTP. Email is used for invitation, recovery, and security notices; email OTP is not treated as strong MFA. Public Google sign-up and public Admin sign-up are unavailable.
@@ -56,6 +60,10 @@ The dashboard provides an interactive Philippines map using versioned Philippine
 - **Meaningful active users.** Buyer and Vendor activity are tracked separately as unique daily, weekly, and monthly users. A Buyer is active after submitting an order, accepting or countering a quotation, or confirming/reporting fulfillment. A Vendor user is active after publishing or revising a quotation, manually confirming or revising an order, recording fulfillment, or performing an equivalent human operational action. App opens, page views, automated jobs, and auto-accept events alone do not qualify.
 - **Privacy and quality.** Aggregate queries use authorized analytics views rather than exposing individual coordinates. Small groups are suppressed or generalized under the approved disclosure-control rule. Records with unresolved geography appear in a separate data-quality count. PSGC changes are imported through a versioned job; historical orders retain the code and boundary version used for reporting, with documented remapping for current-view aggregation.
 
+- **Materials Analytics.** Within this geographic section, authorized users select Materials Analytics to see categorized material/comparable-variant averages, 7/30/90-day or custom-date trends, a daily graph/table, current eligible Vendor/listing counts and recorded sample counts. Apply the selected PSGC area, including Philippines-wide scope, rather than imposing a 50 km circle on national monitoring. Averages use only MAT-01–MAT-07 public Tier 2 listed prices, equal weight per Vendor, applicable included materials VAT and comparable units/specifications. Transaction/order-state/payment filters remain relevant to GMV and demand panels, but are marked not applicable to listed-price history; they must never silently filter price observations by sales.
+- **Source review and data quality.** `analytics.view_aggregates` permits aggregates only. `materials_analytics.inspect_sources` separately permits inspection of underlying public listing identities, price/version, capture time and geography, with an audit reason. It does not reveal private stock, Buyer coordinates, tax evidence or private quotations. Existing export permission is additionally required for export. A one-Vendor public-price average is labeled Limited Local Data; trend needs two Vendors at both exact endpoints. Existing small-cell protections for Buyer/demand personal data remain separate and unchanged. Show changed participation, missing-day gaps, source mapping exclusions, snapshot delay and separate current/history timestamps. Corrections append a reviewed replacement run and retain original evidence. Do not imply that platform coverage represents every Philippine supplier or an official government price index.
+- **Controls and demonstration.** Super Admin receives source-inspection permission; an approved Custom Role may receive it independently of finance permissions. Use the same list/detail/chart components and calculation service as the other clients with an Admin-specific authorized response. TEST runs and exports show DEMO — Simulated Marketplace Data and never mix into live marketplace reporting. Snapshot health appears in Integration and Job Health. MAT-07 governs market-analysis tests; FIN-12 independently governs tax/fee demonstration.
+
 Map color never carries meaning alone. Every scale has a legend, units, exact values on focus or selection, sufficient contrast, pattern or text alternatives where required, and a non-map table. Trend charts provide accessible summaries and downloadable authorized data.
 
 **3. Vendor Management:**
@@ -82,9 +90,17 @@ Map color never carries meaning alone. Every scale has a legend, units, exact va
 
 **10. Transaction Log:** Read-only records of Xendit payment requests, verified payment events, Buyer processing fees, Cancellation Refunds, Dispute-Conclusion Refunds, reconciled compensating refunds, COD, and In-Store Payment. Filters include Vendor, Buyer, order, trigger, Case ID, channel, date, amount, payment state, and refund state. Admins cannot view secret credentials, change refund destinations, withdraw balances, or manually disburse funds.
 
+Within this existing section, add authorized tabs for **Remittance assessments**, **Reconciliation exceptions**, **Commission statements**, **Tax adjustments**, and **Tax report packages**. Each has the same filterable TEST origin, Vendor/taxpayer, order/payment/statement, period, status and audit references under FIN-10. Read-only logs stay immutable; separately permissioned review/approval commands append new events rather than editing the log. The default dashboard states **DEMO_PLATFORM_WITHHOLDER — simulation**, while actual production responsibility remains UNCONFIRMED.
+
+Finance KPIs show assessed CWT, simulated/provider-reported deductions, unreconciled differences, pending certificates, earned fee value, fee VAT, issued/collected commission bills, overdue receivables and refundable fee credits. These do not change GMV. A CWT amount is never counted as platform revenue. A collected fee is not counted as revenue again after its EARNED posting.
+
 **11. Invoice Request Log:** Read-only tracking of Buyer invoice requests and Vendor-uploaded files, including order, request date, service target, upload date, invoice reference, uploader, correction state, and download event. MateryalPH documents are clearly distinguished from the Vendor's BIR-compliant invoice. Admins do not create or calculate a Vendor tax invoice.
 
+FIN-09 extends this log to invoices already issued without Buyer requests, mismatched invoice totals, taxpayer electronic-invoicing coverage/deadline, platform fee bills and sample/real document provenance. A PDF attachment is not a declaration of electronic-invoicing compliance. No Admin may mark a SAMPLE document as an official invoice or a generic report export as an accepted BIR filing.
+
 **12. Platform Settings:** Authorized Super Admins manage non-secret operational defaults, including SRS and FMS default weights, radius values, Vendor-response window, 45-minute payment window, quotation deadline limits, reminder offsets, dispute deadlines, rating windows, badge thresholds, budget warning threshold, invoice-request service target, analytics disclosure thresholds, upload limits, and feature flags. SRS and FMS weight groups must total 100%. VPS remains fixed at 50% VCS and 50% OHS. Buyer preference records remain in `buyer_ranking_preferences` and are never overwritten by a platform-default update. Admins may not impose a platform-wide numeric NRPC cap; oversight is through disclosure, evidence, flag, dispute, and enforcement rules.
+
+Financial settings use versioned records rather than free-text formulas: 2% commission, FIN-02 rounding, billing schedule, effective tax rules/ATCs, calendar source, evidence requirements and demo scenario. Changing a statutory rate requires a cited effective legal basis and independent approval; it is not a commercial preference. No frontend control enables LIVE while responsibility, registration, fee treatment or refund funding is unconfirmed. Accepted order snapshots retain their fee policy; posted tax retains its original rule version. Tax-profile corrections and financial adjustments are separate commands with recorded reasons.
 
 Xendit API keys, webhook verification tokens, Google API keys, email credentials, encryption keys, and other secrets are excluded from Platform Settings. The portal may display connection health and masked environment labels only.
 
@@ -119,6 +135,8 @@ Every Admin account receives only one role at a time. Role changes are versioned
 
 Geographic aggregate analytics require the separate `analytics.view_aggregates` permission. It is granted to Super Admin and may be assigned through an approved Custom Role. Row-level personal records, exact Buyer coordinates, bulk export, and sensitive evidence require separate permissions; access to the aggregate map never implies access to them.
 
+Finance permissions follow FIN-10. Super Admin may view/review tax, approve statements, export reports and record externally evidenced outcomes, but the same user cannot prepare and approve an adjustment, tax override or filing package. Use two named Super Admin test accounts for that demonstration. Vendor Verification Staff may review registration/declaration evidence within assigned scope; they cannot authorize a new statutory rate or mark a tax return filed. Order and Dispute Staff may decide an order remedy and view its refund amounts without receiving full tax-document or filing authority. All other roles are denied finance exports unless explicitly assigned the approved permission set.
+
 An Admin cannot review their own access change, recover their own TOTP through an administrative bypass, or modify records outside the assigned scope. Production database access, deployment commands, and environment secrets remain outside the normal Admin Portal.
 
 ---
@@ -150,6 +168,10 @@ When a case is transferred, the system records the former handler, new handler, 
 8. Activation, rejection, later restriction, expiration, and restoration are audit-logged and notified to the Vendor.
 
 An Admin cannot override a missing mandatory requirement by editing the frontend. A permitted exceptional override, if introduced later, requires a dedicated policy, reason, authorization, and audit event.
+
+For this capstone the activation checklist distinguishes SAMPLE tax documents and Xendit TEST capability from real BIR registration/KYC. Apply FIN-04 to the effective profile and route unavailable evidence to the correct outcome: missing COR blocks live selling; absent relief declaration means standard withholding rather than invented relief. Registration documents without legal expiry use `NOT_APPLICABLE`; declaration periods have their own validity rules. Show the fee Terms version and commission basis on activation review. No sample approval can be reused for a future live account.
+
+The Tax Profile panel displays legal/trade identity, VAT status, tax year, prior-year position, declaration year and receipt, outside-platform disclosure scope, current local total, threshold-breach flag and withholding reason. Review changes create new versions. The preview tests their effect on future assessments only; disputed historical treatment opens an adjustment. Test scenarios cover both VAT and non-VAT Vendors, validated relief, missing declarations and thresholds without making an assertion about MateryalPH's own registration.
 
 ---
 
@@ -236,9 +258,26 @@ Refunds use separate triggers and records:
 - **Cancellation Refund:** Automatically initiated when cancellation of an already-paid order becomes final. The calculation records cancellation cause, NRPC treatment, refundable amount, and responsible actor. Vendor cancellation refunds all Buyer-paid order amounts and forfeits NRPC.
 - **Dispute-Conclusion Refund:** Automatically initiated only when a concluded dispute decision awards a full or partial refund. It stores the Case ID and decision version.
 
-Each refund record contains trigger, order, Case ID when applicable, Vendor sub-account, original payment request, original masked method, amount, supported-channel capability, Xendit reference, idempotency key, initiator or system rule, timestamps, and state. Refunds return to the original payment method. `REFUND_PENDING` means the request is still being processed; even a successful provider event does not justify claiming that funds already appear in the Buyer's account. Failed refunds enter an exception queue without duplicating the request.
+Each online refund record contains trigger, order, Case ID when applicable, Vendor sub-account, original payment request, original masked method, amount, supported-channel capability, Xendit reference, idempotency key, initiator or system rule, timestamps, and state. Online refunds return to the original payment method. Physical reimbursement records use their original cash collection and separate evidence states under FIN-07. `REFUND_PENDING` means the request is still being processed; even a successful provider event does not justify claiming that funds already appear in the Buyer's account. Failed refunds enter an exception queue without duplicating the request.
 
-The Buyer-facing Payment Processing Fee is stored separately from MateryalPH commission. MateryalPH commission is zero. Any production pass-through of processing fees must match the active Xendit agreement and applicable Philippine requirements.
+The Buyer-facing Payment Processing Fee, Vendor CWT and platform commission are stored separately. Commission follows FIN-03: 2% of completed materials value after discounts and excluding materials VAT, billed monthly for all payment methods. No commission split is made from Buyer payments in this capstone release. Any live processor-fee pass-through requires validation of the applicable channel/provider agreement and law.
+
+Apply FIN-01–FIN-12 within Payment and Refund Oversight. The ordered finance process is:
+
+1. Open a remittance group and verify environment, original successful collections, Vendor identity, assigned withholding scenario/entity and tax-profile version. Do not assess a mere withdrawal or direct Vendor cash receipt as a new sale.
+2. Inspect FIN-05 components `C`, `R`, `D_r`, `V_r`, `P`, resulting `G`, threshold before/after, rate and `W`. The interface explains every deduction and displays source evidence. A negative/inconsistent base is `BASE_REVIEW_REQUIRED`; a reported mismatch is `RECONCILIATION_EXCEPTION`.
+3. In the platform demo, show `SIMULATED_WITHHELD`. In the provider demo, reconcile the imported simulated deduction without creating a second one. Neither creates a live BIR payment. Link expected and reported settlement amounts to the original payment; payment success and tax reconciliation remain independent.
+4. On completed orders inspect the earned 2% fee, using VAT-exclusive discounted materials value. The first-of-month job drafts fee statements. Approve without editing source assessments, issue with the FIN-03 due date, then monitor Owner fee payment to the platform test account. A late or failed fee payment creates a receivable task, not a Buyer cancellation or withheld refund.
+5. On final cancellation or enforceable dispute refund, verify the Buyer entitlement, original payment allocation and any cash portion. Queue the correct existing refund trigger. Open separate fee credit and tax-adjustment cases. A Vendor's tax or fee debt cannot be deducted from Buyer reimbursement.
+6. For a tax adjustment, the preparer records original period/assessment, reason, proposed correction, refund evidence and certificate impact. A different authorized reviewer approves or rejects. Posted/closed periods are amended by linked entries and the externally required process, never deleted or silently recalculated.
+7. Prepare a package by withholding entity and tax period under FIN-08. Reconcile remittances to assessments, adjustments, selected ATCs, certificate totals and return/alphalist exports. Inspect missing evidence and due-date validation before permitting REVIEWED. The same user cannot prepare and approve the package.
+8. Export a watermarked demo package with hash and source versions. Mark only EXPORTED or SIMULATED_SUBMISSION_RECORDED. Future live FILED/BIR_PAID outcomes require separate authentic submission/payment evidence. A provider certificate remains issued by that provider; an Admin cannot impersonate its issuer.
+
+The financial case detail provides an expandable amount table, current responsible actor, timestamped event history, deadlines, private evidence and permitted next action. Mask taxpayer identifiers except for specifically authorized review/export. CSV exports neutralize spreadsheet-formula injection in user-supplied cells. Export and download events record the actual user and file hash. Alerts surface refund failure, declaration due date, threshold breach, missing certificate, unapproved billing draft and overdue statement without attaching sensitive documents to general notifications.
+
+For physical reimbursements, track `VENDOR_REIMBURSEMENT_PENDING` and evidence-based `REIMBURSEMENT_CONFIRMED` independently of online refund status. A combined remedy closes only after every required online and physical component is terminal and satisfied. No Admin manually disburses funds or changes the original online refund destination. A test reset creates a new isolated fixture run; it cannot erase the demonstrated audit chain or mix test data into live exports.
+
+The defense walkthrough uses FIN-06 and FIN-12: demonstrate a qualifying online order, VAT arithmetic, a missing declaration, threshold crossing under concurrency, direct cash, mixed NRPC, completed commission billing, cancelled-order refund and post-completion partial refund. Present the unresolved production withholding assignment explicitly as a verified deployment gate, rather than claiming an agreement that does not exist.
 
 ---
 
@@ -253,6 +292,22 @@ Audit logs are append-only through the application. Corrections are represented 
 ---
 
 ### Authoritative Compliance References
+
+- [BIR RR No. 16-2023 — Merchant remittance withholding and exclusions](https://bir-cdn.bir.gov.ph/BIR/pdf/RR%20No.%2016-2023%203.pdf)
+- [BIR RMC No. 8-2024 — Registration, declarations, thresholds and responsibility](https://bir-cdn.bir.gov.ph/BIR/pdf/RMC%20No.%208-2024%20(1).pdf)
+- [BIR RR No. 5-2025 — Current 0.5% gross-remittance rate](https://bir-cdn.bir.gov.ph/BIR/pdf/RR%20No.%205-2025.pdf)
+- [BIR RMO No. 18-2025 — Replacement withholding codes](https://bir-cdn.bir.gov.ph/BIR/pdf/RMO%20No.%20018-2025.pdf)
+- [BIR RMO No. 26-2025 — Corrected gross-remittance code descriptions](https://bir-cdn.bir.gov.ph/BIR/pdf/RMO%20No.%2026-2025%20Digest.pdf)
+- [BIR RMC No. 55-2026 — Withholding alphalist submissions](https://bir-cdn.bir.gov.ph/BIR/pdf/RMC%20No.%2055-2026.pdf)
+- [BIR RR No. 11-2025 — Electronic invoicing and reporting](https://bir-cdn.bir.gov.ph/BIR/pdf/RR%20No.%2011-2025.pdf)
+- [BIR RR No. 26-2025 — Electronic-invoice transition and coverage](https://bir-cdn.bir.gov.ph/BIR/pdf/RR%20No.%2026-2025%20Digest.pdf)
+- [BIR Form 2550Q guidance — VAT rates and bases](https://bir-cdn.bir.gov.ph/BIR/pdf/2550Q%20guidelines%20April%202024_final.pdf)
+- [Xendit — Philippine withholding on gross remittances](https://docs.xendit.co/docs/withholding-tax-on-gross-remittances-ph)
+- [Xendit — xenPlatform fees](https://docs.xendit.co/docs/xenplatform-fees)
+- [Xendit — Split payments and refund limitations](https://docs.xendit.co/docs/split-payments)
+- [PwC — When the BIR says mine to online sellers, February 2024](https://www.pwc.com/ph/en/tax/tax-publications/taxwise-or-otherwise/2024/when-the-bir-says-mine-to-online-sellers.html)
+- [Inquirer — Online-seller withholding implementation, July 2024](https://newsinfo.inquirer.net/1961672/bir-online-sellers-must-now-pay-withholding-tax)
+- [Cruz Marcelo — RR No. 16-2023 overview](https://cruzmarcelo.com/quick-look-bir-revenue-regulations-no-16-2023-requires-e-marketplaces-and-digital-financial-services-providers-to-withhold-1-income-tax-on-remittances-to-merchants/)
 
 - This workflow is a product and technical control specification, not legal advice. Philippine counsel, the Data Protection Officer, tax advisers, and the contracted payment provider must complete a pre-launch review and approve changes when governing requirements or contracts change.
 - [Lawphil — Republic Act No. 11967, Internet Transactions Act of 2023](https://www.lawphil.net/statutes/repacts/ra2023/ra_11967_2023.html)
