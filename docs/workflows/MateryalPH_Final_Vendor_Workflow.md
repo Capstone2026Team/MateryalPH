@@ -8,7 +8,11 @@ MateryalPH provides a dedicated **web-based Vendor Portal** developed using Reac
 
 The System Workflow is the authoritative source for shared security, state, scoring, payment, privacy, accessibility, audit, and integration rules. This Vendor Workflow defines Vendor-facing processes, permissions, and responsibilities.
 
-The Vendor website includes a public landing page for supplier recruitment. The page explains the available Buyer audience, onboarding requirements, marketplace functions, zero-commission policy, third-party payment fees, and applicable limitations without guaranteeing sales or revenue.
+**Approved capstone operating basis — 5 September 2026.** MateryalPH is an academic prototype, not an asserted BIR-registered operating business. All Xendit integrations use TEST credentials and test accounts. Every payment screen, financial report, certificate preview and billing statement carries **DEMO — No real funds or BIR filing**. A successful test webhook demonstrates provider integration; it does not prove real collection, statutory withholding, remittance to the BIR, or government approval. Physical-payment demonstrations record simulated cash handover to the Vendor. Seeded identities and tax documents are conspicuously fictional and must never be submitted to regulators or used to represent a real business as verified.
+
+The approved commercial design uses a **2% Vendor-paid commission on completed materials value after discounts and excluding materials VAT**, billed monthly for Online, COD and In-Store orders. The fee is distinct from Buyer-paid processor charges and Vendor withholding. No subscription or listing charge applies. The System Workflow's controls `FIN-01` through `FIN-12` are authoritative for calculation and implementation; the other workflows apply them within their existing screens. The production withholding entity is **UNCONFIRMED**. Test scenarios may simulate either responsibility path, but no Admin toggle can establish a real legal allocation or enable live money movement.
+
+The Vendor website includes a public landing page for supplier recruitment. The page explains the available Buyer audience, onboarding requirements, marketplace functions, the 2% Vendor-paid monthly commission policy under FIN-03, third-party payment fees, and applicable limitations without guaranteeing sales or revenue. The public demo page visibly identifies the academic TEST environment and does not claim actual BIR registration or live merchant activation.
 
 - **Key Focus:** Marketplace purpose, eligibility, verification, setup, fees, fulfillment responsibilities, privacy, and Vendor obligations.
 - **Call to Action:** **Create Vendor Account** or **Sign In**, leading to the Vendor Portal authentication page.
@@ -169,6 +173,12 @@ Business Information is separated from the public Store Profile and includes:
 
 All Vendors also submit the applicable LGU Business Permit, BIR Certificate of Registration, TIN information, declared VAT status, and other required regulatory evidence. Additional ISO or industry certifications are optional unless a product or law makes them mandatory.
 
+Tax onboarding follows FIN-04 and FIN-09 in the System Workflow. The Owner supplies the legal/trade name, taxpayer identity, individual/corporate classification, fiscal year, VAT/non-VAT registration evidence and applicable invoicing coverage. A BIR COR is registration evidence, not proof of exemption from withholding. Do not impose an invented annual expiry on a COR; use `NOT_APPLICABLE` when no expiry applies, while separately reviewing registration changes and declarations.
+
+To claim threshold relief, the Owner submits the prescribed BIR-received declaration with year, receipt, prior-year position and scope of outside-platform remittances. Other relief requires its specific supporting authority. The system offers **Submit declaration**, **View withholding status**, **Explain missing evidence** and **Report threshold exceeded**. A missing declaration does not necessarily block an otherwise registered Vendor from selling; it selects standard withholding unless another validated relief basis applies. A missing required BIR registration is a production activation blocker. TEST fixtures may exercise these states only with visibly sample evidence and cannot become production-approved documents.
+
+Tax-profile corrections create a new version and notify the reviewer. They cannot change already accepted prices or posted tax. The Owner sees the effective date, document status, threshold reason and next required action. Only the Owner attests a declaration; a Store Manager may prepare a correction draft. Sensitive documents remain private, with no TIN or declaration disclosed to other Vendors or the public map.
+
 The Vendor supplies the document and entered metadata. An authorized Admin verifies the document number, issue date, expiration date or `NOT_APPLICABLE`, decision, remarks, and review source. Vendor-entered dates are not treated as final verified dates. Every document may be `PENDING_VERIFICATION`, `APPROVED`, `RETURNED_FOR_CORRECTION`, `REJECTED`, or `EXPIRED`.
 
 An Admin must provide a reason for rejection or return. The previous approved document may remain effective while a replacement is reviewed unless it has expired or evidence requires immediate restriction. Expiration monitoring uses the Admin-verified date and notifies the Vendor before expiry. A critical verified field change reopens review and creates an audit record.
@@ -230,9 +240,15 @@ The system recommends a suitable vehicle; it does not dispatch automatically. Th
 
 Every Vendor must complete **Xendit xenPlatform sub-account onboarding** before marketplace activation. MateryalPH stores only the required account identifier, capabilities, connection status, and reconciliation references. Payment credentials and secret keys remain with Xendit or protected server configuration.
 
-MateryalPH charges zero marketplace commission. The Buyer pays the separately disclosed Payment Processing Fee, subject to the active Xendit agreement and applicable law. The Vendor can review MateryalPH transaction records and use the Xendit dashboard for balances and withdrawals. MateryalPH has no internal Vendor wallet and does not claim to hold funds in escrow.
+MateryalPH applies the 2% Vendor-paid commission under FIN-03, earned on completed materials value after discounts and excluding materials VAT, and billed monthly for every payment method. It is not deducted from Buyer payments in this capstone release. The Buyer pays the separately disclosed order Payment Processing Fee in the demo; live pass-through requires validated channel/provider terms. The Vendor reviews transaction records and uses the Xendit dashboard for provider balances and withdrawals. MateryalPH has no internal Vendor wallet or escrow.
 
 Enabled payment channels come from the actual Xendit environment. Each channel must have documented limits, expiry, settlement, and refund capability. A channel without native refund support remains disabled unless an approved Vendor-managed refund process is implemented and disclosed. Online full-order payments and NRPC assurance payments for COD or In-Store Payment use separate payment purposes and references. An NRPC assurance payment expires after 45 minutes and is credited against the remaining physical-payment balance; it is not an additional charge.
+
+The Payment Configuration screen separates **Xendit TEST connection**, **Tax profile**, **Withholding arrangement**, **Commission Terms**, **Physical payments**, and **Refund capability**. Unknown actual withholding responsibility is displayed as **Production assignment unconfirmed**. The default teaching scenario is `DEMO_PLATFORM_WITHHOLDER`; a second scenario exercises provider reconciliation. Neither claims a real tax deduction by Xendit. All payment references retain their environment and evidence origin.
+
+The Owner accepts the 2% fee schedule, its exclusive materials base, monthly collection, VAT-inclusive fee treatment where applicable, cancellation/partial-refund credits, statement due-date rule and dispute process. Store these as a versioned agreement. No fee is added to an existing accepted order by changing settings. The monthly bill uses `PLATFORM_FEE_PAYMENT` to the platform test account, not the Vendor's Buyer-payment sub-account.
+
+COD and In-Store amounts are collected directly by the Vendor. Authorized Store Staff may record cash received and evidence; Fulfillment Staff may record handover evidence but cannot independently mark cash collected without the relevant payment-record permission. A record stores amount, time, recorder, source and Buyer acknowledgment. It does not fabricate a Xendit webhook. Partial collection leaves an outstanding obligation. Changes use correction events; the outstanding amount may not become negative. NRPC principal is deducted from the remaining balance exactly once under FIN-02.
 
 ## 6. Vendor Team Account Management
 
@@ -246,12 +262,12 @@ A Vendor is eligible for marketplace activation only when every mandatory item h
 
 1. Email verified and required agreements accepted.
 2. Business Information complete and validated.
-3. Required DTI or SEC, LGU, BIR, TIN, and applicable regulatory evidence approved.
+3. Required DTI or SEC, LGU, BIR, TIN and applicable regulatory evidence approved for the selected environment; tax profile and invoice method validated. TEST sample evidence is never live registration.
 4. Public Store Profile complete.
 5. Supplier and Bulk Order capability recorded.
 6. Fulfillment method configured.
 7. Delivery Configuration complete when Vendor Delivery is enabled.
-8. Xendit xenPlatform onboarding connected and required capabilities active.
+8. Xendit xenPlatform onboarding connected and required TEST capabilities active; commission Terms accepted; withholding demo scenario selected. A future live activation also requires evidenced responsibility assignment and approved refund funding.
 9. At least one publishable product listing exists; an applicable regulated listing must pass the required PS/ICC workflow before publication.
 10. No unresolved mandatory correction, rejected requirement, expired blocking document, suspension, or activation hold exists.
 
@@ -306,7 +322,7 @@ Order status follows the System Workflow: `AWAITING_VENDOR_CONFIRMATION`, `AWAIT
 
 Every line stores listing, variant, normalized unit, confirmed quantity, unit price snapshot, subtotal, applicable compliance reference, and inventory reservation. Listing-price changes never rewrite an order snapshot. Buyer-facing public stock status does not replace internal quantity validation.
 
-MateryalPH does not calculate or issue the Vendor's official tax invoice. The order screen shows commercial totals, payment status, processor-fee records, refunds, and uploaded Vendor invoice references. Any Vendor-entered tax data is explicitly identified as Vendor-supplied and is not treated as MateryalPH tax advice.
+MateryalPH calculates transaction arithmetic, the remittance withholding assessment and commission estimate through FIN-02–FIN-06. Vendor tax classifications are validated inputs; the system does not calculate the Vendor's full income/business-tax return or issue the Vendor's official invoice. Each Order Detail separates **Buyer payment breakdown**, **Vendor settlement/withholding**, **Monthly commission**, and **Vendor invoice**. The Buyer total is unchanged by Vendor CWT and platform commission. Authorized users can expand the computation to see source lines, VAT allocation, qualifying deductions, rate, threshold decision, expected receipt and reconciliation evidence. Unknown provider deductions show a review state, not an invented net payout.
 
 **Conditions**
 
@@ -331,6 +347,8 @@ When an eligible Item-Based request arrives, the backend locks all affected inve
 When an allotment reaches zero, that SKU or variant pauses immediately and sends an in-app notification and email to the permitted Vendor users. Replenishing stock or releasing a reservation does not resume it. An authorized user must review the internal quantity and deliberately resume auto-accept. An auto-accepted online order expires after 45 minutes if payment is not verified; the hard reservation is released and any restored allotment remains paused when it previously reached zero. Repeated unpaid attempts are rate-limited and flagged without automatically penalizing a legitimate Buyer.
 
 An order that needs NRPC always bypasses auto-accept. The Vendor must manually review the request, enter the NRPC amount and reason, and obtain Buyer acceptance before preparation.
+
+Auto-accept additionally requires validated price-tax classifications and current fee Terms. The order-value safeguard uses the Buyer commercial total including applicable materials VAT and delivery, before channel-specific processor fees. Missing monetary classification routes the complete order to manual correction without reservation or payment. CWT and commission are not subtracted to make a large order appear below the safeguard.
 
 ### Project-Based
 
@@ -383,6 +401,8 @@ The Vendor may create a formal quotation from an eligible message thread. Item-B
 
 The quotation builder requires product or material lines, specifications, quantity, unit, unit price, fulfillment method, payment method, expected fulfillment date, and response deadline. Site Delivery also requires the system-suggested vehicle type and trip count to be confirmed or replaced with a valid configured alternative. The system calculates line subtotals, delivery fee, NRPC designation within the order value, Payment Processing Fee where applicable, Amount Due Now, later physical-payment balance, and total.
 
+Each published line also records the tax category, inclusive price, discount allocation and included VAT under FIN-02. The Vendor sees a separate estimated completion commission and withholding preview with an **Estimate — finalized at remittance** label. The preview never promises threshold relief or current net cash. Editing price, discount, tax category, fulfillment fee or NRPC creates a new quotation version with a readable Buyer change summary and renewed acceptance. Item-Based and Project-Based quotations call the same financial service.
+
 NRPC is disabled by default. Only Vendor Owner, Store Manager, or Store Staff may enter and publish its amount, affected lines, and required reason. Customer Service Staff may prepare a quotation draft but cannot publish a monetary change. The Vendor determines the order-specific NRPC amount; there is no platform-wide numeric cap, but the amount cannot exceed the eligible prepared-material subtotal, must reflect actual irreversible preparation, and remains subject to Buyer acceptance, evidence, flagging, and Admin review. Any NRPC quotation requires manual handling and cannot use auto-accept.
 
 Publishing creates an immutable quotation version and soft holds. The Buyer sees the exact deadline and plain-language changes from the attached source. A later edit creates a new version, resets the deadline, and makes the prior version unacceptable. Rejection, counter-offer, expiry, or Vendor withdrawal releases soft holds immediately. Acceptance performs the atomic stock check and creates hard reservations only when all lines remain available.
@@ -391,11 +411,13 @@ Every quotation event uses the shared audit and notification layer: creation, dr
 
 - **E-Invoices**
 
-The module tracks Buyer invoice requests. The Vendor generates the legally compliant invoice through its own BIR-registered invoicing or accounting process and uploads a PDF copy. MateryalPH does not create, number, calculate, or issue the Vendor's official tax invoice.
+The module tracks required Vendor invoice records as well as Buyer copy/correction requests. In production the Vendor issues the appropriate invoice through its registered process when legally due, even without a Buyer request or completed-order status, and may upload a copy once issued. MateryalPH records transaction calculations but does not assign official Vendor invoice numbers or issue that invoice. In TEST every sample is labeled DEMO. FIN-09 distinguishes an uploaded PDF from compliance with structured electronic invoicing and records applicable taxpayer coverage/deadlines.
 
 The request records `REQUESTED`, `UPLOADED`, `DOWNLOADED`, `RETURNED_FOR_CORRECTION`, or `CLOSED`. The service target is three business days after the request and never extends a stricter legal deadline. A later refund may require the Vendor to upload the legally appropriate adjustment document according to current BIR rules; the system must not invent a “credit note” requirement without confirmation of the applicable document.
 
 Vendor Owner, Store Manager, and Store Staff may upload. Customer Service Staff may view request status and communicate with the Buyer but cannot upload the official file unless the role definition is formally changed. The PDF, invoice number, invoice date, uploader, timestamp, and related order are audit-logged.
+
+Invoice records also store issuer, document type, applicable tax breakdown, related lines, source system, sample/live origin and amendment references. The system compares the uploaded invoice's totals with the accepted order. A difference creates `INVOICE_RECONCILIATION_REQUIRED` for explanation/correction; it never retroactively charges the Buyer. Vendor goods invoices, platform service bills, processor invoices and Form 2307 certificates use separate record types. The Vendor remains responsible for its own tax returns and supported withholding-credit claims.
 
 - **Notifications**
 
@@ -403,13 +425,15 @@ Notifications include order requests, response deadlines, Buyer revisions, verif
 
 Users may configure optional categories per channel, but mandatory security, legal, suspension, payment, and dispute notices cannot be disabled. A notification deep-links only to a resource the recipient is authorized to access.
 
+Finance notices add declaration review/due date, threshold crossing, tax adjustment, certificate availability, reconciliation exception, monthly statement issue/due/overdue and fee-credit status. Notify the Owner and permitted Manager; general staff do not receive attached private tax evidence.
+
 - **Disputes**
 
 A transaction dispute may be opened from `PROCESSING` onward. A post-completion return or dispute must be filed within seven calendar days after `COMPLETED`, subject to any non-waivable legal right. The Vendor may respond to an eligible Buyer case, submit evidence, offer replacement or voluntary refund, reject with evidence, or request Admin review. The response window is 48 calendar hours. If a response is filed, the parties have 72 calendar hours to confirm a mutual resolution. Unresolved or unanswered cases escalate to Admin. A requested clarification has a 24-hour response window. One appeal may be filed within five business days with new relevant evidence.
 
 Customer Service Staff and Store Staff may manage the response when dispute handling is enabled by the Owner. The Owner may require all disputes to route to the Owner. Store Manager may act. Fulfillment Staff may contribute fulfillment evidence but cannot decide a commercial remedy. Only the Owner may initiate a voluntary financial refund, unless the backend executes a documented Admin decision through the supported Vendor sub-account process.
 
-Filing a dispute does not create a refund. When a concluded dispute awards a full or partial refund, the backend automatically creates the idempotent Dispute-Conclusion Refund against the original online payment and links it to the Case ID. The Vendor and Buyer see `REFUND_PENDING` until a verified provider event produces `PARTIALLY_REFUNDED`, `REFUNDED`, or `REFUND_FAILED`.
+Filing a dispute does not create a refund. When a concluded dispute awards a full or partial refund, the backend automatically creates the idempotent Dispute-Conclusion Refund instruction linked to the Case ID. Its online portion uses the original payment and verified provider states; its cash portion uses the separate evidenced Vendor reimbursement under FIN-07. The online portion remains `REFUND_PENDING` until authoritative evidence produces `PARTIALLY_REFUNDED`, `REFUNDED`, or `REFUND_FAILED`. A cash-only case never waits for a nonexistent Xendit refund webhook.
 
 **Cancellation and NRPC**
 
@@ -418,6 +442,8 @@ The Buyer may withdraw before Vendor confirmation and may request cancellation w
 When cancellation of an already-paid order becomes final, the backend automatically initiates the separate Cancellation Refund. Vendor-caused cancellation forfeits every NRPC claim, refunds all Buyer-paid order amounts, releases the reservation, and contributes to NFR. An eligible Buyer-caused cancellation during `PROCESSING` may retain the accepted NRPC only when the Vendor submits evidence of the actual irreversible preparation. For COD or In-Store Payment, the online NRPC assurance payment is the refundable source; for full online payment, the refund amount is calculated from the paid order total.
 
 NRPC cannot be retained for Vendor fault or for defective, incorrect, unsafe, misrepresented, or nonconforming goods. It is not a standard cancellation fee and is not added on top of the agreed order value. A Buyer flag does not automatically block an accepted order, but it creates an Admin review record and preserves the objection separately from acceptance.
+
+FIN-07 governs the financial consequences. No commission is earned on cancellation or retained NRPC; an earlier fee record is reversed through a referenced credit. Previously withheld tax opens a separate adjustment review and does not reduce the Buyer refund. For physical cash already collected, the Vendor must fulfil and evidence the reimbursement separately from the online NRPC refund. A refund of an uncollected cash balance is prohibited. Insufficient provider funds create a visible refund exception and Owner action; they never count as successful Buyer reimbursement.
 
 - **Store Management**
 
@@ -455,6 +481,12 @@ Transaction History replaces the former Wallet module. It is a read-only Materya
 
 The Owner and Store Manager may view store-wide records. Other staff see only payment status required for their assigned order and never payout credentials or full financial reports.
 
+Within Transaction History, tabs are **Payments**, **Physical receipts**, **Remittances and CWT**, **Commission statements**, **Refunds and adjustments**, and **Tax documents**. These extend the existing sidebar item and do not create a wallet. Each row exposes environment, order/statement reference, gross amount, applicable deductions, net amount, evidence origin, status and drill-through audit trail.
+
+The commission tab shows estimated versus earned fees, unbilled items, disputed items, approved statements, due dates, payments and credits under FIN-03. The Owner may accept Terms, question a line with evidence and pay a positive issued statement. The Manager can inspect and prepare a dispute but cannot authorize the fee payment. A successful payment requires a verified Xendit TEST event or a distinctly labeled simulation. One statement cannot be paid twice; duplicate or late captures enter reconciliation and compensation review.
+
+The CWT tab shows the effective profile, tax year, documented local/outside-platform threshold position, computation and responsible entity/scenario. It distinguishes assessed, simulated withheld, provider-reported, reconciled, adjustment required and certificate availability. A tax export is not proof that tax was remitted. Tax documents retain the actual/sample issuer; the platform does not replace a provider's name with MateryalPH. Declarations, certificates and export downloads require organization authorization and create audit events.
+
 - **Vendor Team Accounts**
 
   - **Team Accounts**
@@ -483,9 +515,19 @@ Store Performance displays VPS, VCS, MQS, OHS, CRR, FRR, eligibility counts, and
 
 The Owner and Store Manager may view store-wide performance. Store Staff, Customer Service Staff, Inventory Staff, and Fulfillment Staff see only role-relevant operational measures or their attributed activity.
 
+- **Materials Analytics**
+
+Vendor Owner and Store Manager open **Analytics → Materials Analytics** under `materials_analytics.view_competitors`; all other Vendor roles are denied by backend policy. The view defaults to the organization's verified store location and 50 km, with approved smaller radius options. It provides categorized material/specification/variant rows, 7/30/90-day or custom-date filters, daily competitor averages, trend graphs/tables, capture time and the Vendor's own comparable price in a separate column.
+
+The shared MAT-01–MAT-07 service excludes the requesting organization, then requires three distinct competing Vendors at every displayed point/variant/endpoint. Below that threshold show Insufficient Competitor Data, no number and no exact sub-threshold count. Do not show individual offers, store names, IDs, logos, locations, links, per-offer timestamps or other identifying response/export fields. Authorized users can inspect a material's specifications and aggregate variants, but cannot open competitors through this analytics page. Graphs use gaps for suppressed/missing data. A Buyer-visible material detail response cannot be requested using a Vendor session.
+
+The purpose is manual price planning. An **Edit My Listing** action is offered only when the current user also has the existing listing-edit permission and the organization owns the listing. It opens the normal editor; explicit confirmation creates an audited price version. Analytics never changes a price, infers a competitor's quantity or exposes a private quotation. Show the daily average time separately from the current own-listing time and note when participation changed. Use DEMO — Simulated Marketplace Data for fixtures. Server responses, downloads, chart tooltips and caches enforce the same restrictions; public Buyer browsing is outside this interface's confidentiality guarantee.
+
+The Owner/Manager can encounter loading, empty, not-yet-comparable, insufficient history/competitors, stale, offline and denied states. Retry is read-only and never updates prices. Store Performance and Earnings remain separate analytics sections; tax and commission continue to follow FIN-01–FIN-12 rather than market-price estimates.
+
   - **Earnings**
 
-Earnings displays completed gross order value, refunds, online payment records, COD, In-Store Payment, processing-fee records, order count, and estimated net receipts for internal operational reference. It does not calculate official VAT, issue a tax return, or replace the Vendor's accounting books. Uploaded invoice data is Vendor-supplied.
+Earnings follows FIN-11 and displays commercial sales, included transaction VAT, returns, online collections, recorded physical collections, processor charges, CWT credit records, earned commission, unpaid fee statements and estimated cash receipts separately. Withholding is not recorded as a reduction of sales or a platform commission. Cash receipts do not equal taxable income. These operational computations and exports support reconciliation but do not replace the Vendor's accounting books, official tax returns or registered invoicing process. Demo aggregates are visibly TEST-only.
 
 The Owner and Store Manager may view store-wide earnings. Other staff do not receive store-wide revenue access. Reports may be exported as CSV or spreadsheet with an **Internal Operational Report — Not a Tax Invoice** notice.
 
@@ -625,10 +667,13 @@ Official DTI-BPS sources remain authoritative. MateryalPH verification is an ope
     - Team Tracking
 - **Analytics**
   - Store Performance
+  - Materials Analytics (Vendor Owner and Store Manager only)
   - Earnings
 - **Store or Staff Profile**
 
 ---
+
+Tax and fee source references are maintained with FIN-01–FIN-12 in [the System Workflow](MateryalPH_Final_System_Workflow.md). The reviewed legal baseline includes RR No. 16-2023 as amended by RR No. 5-2025, RMC No. 8-2024, RMO Nos. 18-2025 and 26-2025, RMC No. 55-2026, and the applicable invoicing issuances. Operational dates and external requirements must use the same versioned source register across all portals.
 
 ### Future Enhancements
 
