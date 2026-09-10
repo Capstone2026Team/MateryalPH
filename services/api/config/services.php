@@ -31,4 +31,19 @@ return [
         ],
     ],
 
+    'google_oidc' => [
+        'client_id' => env('GOOGLE_OIDC_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_OIDC_CLIENT_SECRET'),
+        'redirect_uri' => env('GOOGLE_OIDC_REDIRECT_URI'),
+        'authorization_endpoint' => 'https://accounts.google.com/o/oauth2/v2/auth',
+        'token_endpoint' => 'https://oauth2.googleapis.com/token',
+        'jwks_uri' => 'https://www.googleapis.com/oauth2/v3/certs',
+    ],
+
+    'recaptcha' => [
+        'project_id' => env('RECAPTCHA_GOOGLE_CLOUD_PROJECT_ID'),
+        'api_key' => env('RECAPTCHA_ENTERPRISE_API_KEY'),
+        'timeout_seconds' => (int) env('RECAPTCHA_TIMEOUT_SECONDS', 5),
+    ],
+
 ];

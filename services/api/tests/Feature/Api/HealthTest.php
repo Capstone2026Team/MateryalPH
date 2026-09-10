@@ -10,6 +10,9 @@ class HealthTest extends TestCase
     {
         $this->getJson('/api/v1/health')
             ->assertOk()
-            ->assertJsonPath('status', 'ok');
+            ->assertHeader('X-Correlation-ID')
+            ->assertJsonPath('data.status', 'ok')
+            ->assertJsonPath('data.service', 'materyalph-api')
+            ->assertJsonPath('errors', []);
     }
 }

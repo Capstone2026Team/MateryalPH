@@ -14,7 +14,14 @@
 
   body {
     margin: 0;
+    min-width: 320px;
   }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  button, input { font: inherit; }
+  ::selection { background: var(--mp-color-brand-orange-100); color: var(--mp-color-text-strong); }
+  input { caret-color: var(--mp-color-action-primary); }
+  * { scrollbar-color: var(--mp-color-brand-orange-300) var(--mp-color-surface-canvas); scrollbar-width: thin; }
 
   :focus-visible {
     outline: 2px solid var(--mp-color-focus-ring);

@@ -2,30 +2,49 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Concerns\HasUuidV7;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+/**
+ * @property string $public_id
+ * @property string $name
+ * @property string $email
+ * @property string $account_type
+ * @property string $account_status
+ */
+class User extends Authenticatable implements OAuthenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasUuidV7, Notifiable;
+
+    /** @use HasFactory<UserFactory> */
+    use HasFactory;
+
+    public const UPDATED_AT = 'updated_at';
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'public_id',
+        'account_type',
+        'account_status',
+        'last_authenticated_at',
     ];
 
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         'password',
@@ -42,6 +61,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_authenticated_at' => 'immutable_datetime',
         ];
     }
 }

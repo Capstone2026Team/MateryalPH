@@ -1,0 +1,146 @@
+name: materyalph
+
+services:
+  postgres:
+    image: postgis/postgis:16-3.5
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-materyalph_dev}
+      POSTGRES_TEST_DB: materyalph_test
+      POSTGRES_USER: ${DB_USERNAME:-materyalph_dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run scripts/setup-local.ps1 first}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infrastructure/docker/postgres/init-test-database.sh:/docker-entrypoint-initdb.d/10-create-test-database.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+
+  minio:
+    image: minio/minio:RELEASE.2025-07-23T15-54-02Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:?Run scripts/setup-local.ps1 first}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:?Run scripts/setup-local.ps1 first}
+    ports:
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio-data:/data
+
+  api-setup:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    working_dir: /workspace/services/api
+    command:
+      - sh
+      - -lc
+      - >-
+        composer install --no-interaction --prefer-dist --no-progress &&
+        php artisan migrate --seed --force &&
+        if [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ];
+        then PASSPORT_KEY_PATH= php artisan passport:keys --force; fi &&
+        PASSPORT_KEY_PATH=/var/lib/materyalph/passport sh /workspace/scripts/prepare-passport-keys.sh &&
+        PASSPORT_KEY_PATH=/var/lib/materyalph/passport php /workspace/scripts/verify-passport-keys.php
+    env_file:
+      - services/api/.env
+    volumes:
+      - .:/workspace
+      - api-vendor:/workspace/services/api/vendor
+      - passport-keys:/var/lib/materyalph/passport
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    working_dir: /workspace/services/api
+    command: php artisan serve --host=0.0.0.0 --port=8080 --no-reload
+    env_file:
+      - services/api/.env
+    environment:
+      PASSPORT_KEY_PATH: /var/lib/materyalph/passport
+    volumes:
+      - .:/workspace
+      - api-vendor:/workspace/services/api/vendor
+      - passport-keys:/var/lib/materyalph/passport:ro
+    ports:
+      - "${API_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8080/api/v1/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    depends_on:
+      api-setup:
+        condition: service_completed_successfully
+
+  horizon:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    working_dir: /workspace/services/api
+    command: php artisan queue:work --sleep=1 --tries=3 --timeout=90
+    env_file:
+      - services/api/.env
+    environment:
+      PASSPORT_KEY_PATH: /var/lib/materyalph/passport
+    volumes:
+      - .:/workspace
+      - api-vendor:/workspace/services/api/vendor
+      - passport-keys:/var/lib/materyalph/passport:ro
+    depends_on:
+      api-setup:
+        condition: service_completed_successfully
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    working_dir: /workspace/services/api
+    command: php artisan schedule:work
+    env_file:
+      - services/api/.env
+    environment:
+      PASSPORT_KEY_PATH: /var/lib/materyalph/passport
+    volumes:
+      - .:/workspace
+      - api-vendor:/workspace/services/api/vendor
+      - passport-keys:/var/lib/materyalph/passport:ro
+    depends_on:
+      api-setup:
+        condition: service_completed_successfully
+
+volumes:
+  postgres-data:
+  redis-data:
+  minio-data:
+  api-vendor:
+  passport-keys:

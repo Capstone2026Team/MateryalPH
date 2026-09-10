@@ -27,6 +27,18 @@ Do not create local environment files until the repository-root `.gitignore` has
 
 ## Local development
 
+Start the approved PostgreSQL/PostGIS, Redis, API, queue worker, scheduler,
+Mailpit, and MinIO services from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/setup-local.ps1
+docker compose up -d --build
+docker compose ps
+```
+
+Mailpit is available at `http://localhost:8025`. OTP and invitation mail is
+queued: the API, queue worker, and scheduler must all remain running.
+
 ### API
 
 ```powershell
@@ -69,7 +81,11 @@ Run the checks relevant to a change from the owning directory:
 # services/api
 composer validate --strict
 vendor/bin/pint --test
+vendor/bin/phpstan analyse --memory-limit=1G
 php artisan test
+
+# isolated PostgreSQL 16/PostGIS migration and backend gate
+powershell -ExecutionPolicy Bypass -File scripts/run-tests-isolated.ps1
 
 # each React portal
 npm run typecheck
@@ -83,5 +99,9 @@ flutter test
 # repository root after project-local installation
 npx impeccable detect apps/vendor-web/src apps/admin-web/src
 ```
+
+Real provider credentials belong only in ignored local files. See
+`docs/architecture/MateryalPH_Environment_and_API_Key_Setup.md` for Google OIDC
+and Vendor reCAPTCHA Enterprise setup. Buyer iOS acceptance requires macOS with Xcode.
 
 The approved authentication target is Laravel Passport. See `docs/adr/0001-api-authentication-passport.md` for the controlled transition from the scaffold's Sanctum dependency.

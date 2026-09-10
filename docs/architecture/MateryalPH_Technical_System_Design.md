@@ -755,7 +755,12 @@ GitHub describes encrypted repository/environment secrets in its [Actions secret
 
 - TLS in transit and managed encryption at rest.
 - Argon2id password hashing.
-- CSRF protection for cookie-authenticated web mutations.
+- Server-owned authentication route separation: browser authentication uses
+  `/api/v1/auth/*` with CSRF on every state-changing operation and cookie
+  authentication where applicable; native Buyer authentication uses
+  `/api/v1/mobile/auth/*` with Passport/Bearer tokens and no browser-cookie or
+  browser-CSRF dependency. Client headers, body fields, User-Agent, Origin, and
+  mobile-embedded secrets never select or prove the transport.
 - Strict CORS allowlist.
 - Content Security Policy and secure headers.
 - Server-side validation and output encoding.

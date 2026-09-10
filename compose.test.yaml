@@ -1,0 +1,63 @@
+name: materyalph_phase1_test
+
+services:
+  postgres-test:
+    image: postgis/postgis:16-3.5
+    environment:
+      POSTGRES_DB: materyalph_test
+      POSTGRES_USER: materyalph_test_runner
+      POSTGRES_PASSWORD: ${TEST_DB_PASSWORD:?Run scripts/run-tests-isolated.ps1 first}
+    volumes:
+      - phase1-test-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U materyalph_test_runner -d materyalph_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  redis-test:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  api-test:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    working_dir: /workspace/services/api
+    command: ["tail", "-f", "/dev/null"]
+    env_file:
+      - services/api/.env.testing
+    environment:
+      APP_ENV: testing
+      APP_DEBUG: "false"
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres-test
+      DB_PORT: "5432"
+      DB_DATABASE: materyalph_test
+      DB_USERNAME: materyalph_test_runner
+      DB_PASSWORD: ${TEST_DB_PASSWORD:?Run scripts/run-tests-isolated.ps1 first}
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+      MAIL_MAILER: array
+      TEST_DB_ALLOWED_HOSTS: postgres-test
+      PASSPORT_KEY_PATH: /var/lib/materyalph/passport
+    volumes:
+      - .:/workspace
+      - phase1-test-vendor:/workspace/services/api/vendor
+      - phase1-test-passport-keys:/var/lib/materyalph/passport
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+
+volumes:
+  phase1-test-postgres:
+  phase1-test-vendor:
+  phase1-test-passport-keys:
