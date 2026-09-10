@@ -1,5 +1,5 @@
 name: materyalph
-description: "A new Flutter project."
+description: "MateryalPH Buyer mobile application."
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -24,8 +24,16 @@ dependencies:
   flutter:
     sdk: flutter
 
-  dio: ^5.4.3
+  app_links: ^7.0.0
+  built_collection: ^5.1.1
+  built_value: ^8.4.0
   cupertino_icons: ^1.0.8
+  dio: ^5.7.0
+  flutter_secure_storage: ^10.0.0
+  materyalph_api_client:
+    path: ../../packages/api-contract/generated/dart
+  shared_preferences: ^2.5.4
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +48,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/branding/
+    - assets/onboarding/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -1,0 +1,329 @@
+name: Phase 1 quality gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase-one-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Laravel, PostgreSQL, and schema evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgis/postgis:16-3.5
+        env:
+          POSTGRES_DB: materyalph_test
+          POSTGRES_USER: materyalph_test_runner
+          POSTGRES_PASSWORD: ci_phase1_test_password_32_chars_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U materyalph_test_runner -d materyalph_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+      redis:
+        image: redis:7.4-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    defaults:
+      run:
+        working-directory: services/api
+    env:
+      APP_ENV: testing
+      APP_DEBUG: false
+      APP_URL: http://localhost:8080
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: materyalph_test
+      DB_USERNAME: materyalph_test_runner
+      DB_PASSWORD: ci_phase1_test_password_32_chars_only
+      TEST_DB_ALLOWED_HOSTS: 127.0.0.1
+      CACHE_STORE: array
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: array
+      MAIL_MAILER: array
+      FINANCE_MODE: TEST
+      WITHHOLDING_SCENARIO: NONE
+      PLATFORM_TAX_PROFILE: NON_VAT
+      LIVE_COMMERCE_ENABLED: false
+      MATERIALS_ANALYTICS_ENABLED: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_pgsql, sodium
+          coverage: none
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ runner.os }}-${{ hashFiles('services/api/composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application key
+        run: |
+          cp .env.example .env
+          php artisan key:generate --force
+
+      - name: Migrate and seed the exact PostgreSQL schema
+        run: php artisan migrate:fresh --seed --force
+
+      - name: Create ephemeral Passport signing keys
+        run: php artisan passport:keys --force
+
+      - name: Check PHP formatting
+        run: vendor/bin/pint --test
+
+      - name: Run static analysis
+        run: vendor/bin/phpstan analyse --memory-limit=1G
+
+      - name: Run backend tests
+        run: php artisan test
+
+      - name: Generate schema-derived architecture evidence
+        run: php artisan materyalph:schema-document
+
+      - name: Upload schema documentation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: schema-documentation-${{ github.sha }}
+          path: |
+            docs/architecture/erd.md
+            docs/architecture/data-dictionary.md
+          if-no-files-found: error
+
+  contract:
+    name: OpenAPI and generated clients
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: packages/api-contract/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Install contract tooling
+        working-directory: packages/api-contract
+        run: npm ci
+
+      - name: Validate and regenerate clients
+        working-directory: packages/api-contract
+        run: |
+          npm run validate
+          npm run generate
+
+      - name: Build TypeScript client
+        working-directory: packages/api-contract/generated/typescript
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build Dart serializers and analyze
+        working-directory: packages/api-contract/generated/dart
+        run: |
+          dart pub get
+          dart run build_runner build
+          dart analyze --no-fatal-warnings
+
+      - name: Reject generated-client drift
+        run: git diff --exit-code -- packages/api-contract/generated
+
+  web:
+    name: ${{ matrix.portal }} portal
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        portal: [vendor-web, admin-web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            packages/api-contract/generated/typescript/package-lock.json
+            packages/web-ui/package-lock.json
+            apps/${{ matrix.portal }}/package-lock.json
+
+      - name: Build generated TypeScript client
+        working-directory: packages/api-contract/generated/typescript
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install shared UI dependencies
+        working-directory: packages/web-ui
+        run: npm ci
+
+      - name: Install portal dependencies
+        working-directory: apps/${{ matrix.portal }}
+        run: npm ci
+
+      - name: Run portal gates
+        working-directory: apps/${{ matrix.portal }}
+        run: |
+          npm run lint
+          npm run typecheck
+          npm run test -- --run
+          npm run build
+
+  vendor-browser:
+    name: Vendor and Admin responsive browser QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            packages/api-contract/generated/typescript/package-lock.json
+            packages/web-ui/package-lock.json
+            apps/vendor-web/package-lock.json
+
+      - name: Build generated TypeScript client
+        working-directory: packages/api-contract/generated/typescript
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install shared UI dependencies
+        working-directory: packages/web-ui
+        run: npm ci
+
+      - name: Install Vendor dependencies
+        working-directory: apps/vendor-web
+        run: npm ci
+
+      - name: Install Chromium
+        working-directory: apps/vendor-web
+        run: npx playwright install --with-deps chromium
+
+      - name: Install and build Admin preview
+        working-directory: apps/admin-web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build and run eight-viewport browser checks
+        working-directory: apps/vendor-web
+        run: |
+          npm run build
+          npm run test:e2e
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor-browser-${{ github.sha }}
+          path: |
+            apps/vendor-web/playwright-report
+            apps/vendor-web/test-results
+          if-no-files-found: ignore
+
+  buyer-mobile:
+    name: Flutter Buyer app
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Build generated Dart serializers
+        working-directory: packages/api-contract/generated/dart
+        run: |
+          dart pub get
+          dart run build_runner build
+
+      - name: Install Buyer dependencies
+        working-directory: apps/buyer-mobile
+        run: flutter pub get
+
+      - name: Check Dart formatting
+        run: dart format --output=none --set-exit-if-changed apps/buyer-mobile/lib apps/buyer-mobile/test
+
+      - name: Analyze and test Buyer app
+        working-directory: apps/buyer-mobile
+        run: |
+          flutter analyze
+          flutter test
+
+  buyer-ios:
+    name: Flutter Buyer iOS simulator build
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Build generated Dart serializers
+        working-directory: packages/api-contract/generated/dart
+        run: |
+          dart pub get
+          dart run build_runner build
+
+      - name: Install, test, and build Buyer iOS
+        working-directory: apps/buyer-mobile
+        run: |
+          flutter pub get
+          flutter test
+          flutter build ios --simulator --no-codesign
+
+  repository-safety:
+    name: Tokens and secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

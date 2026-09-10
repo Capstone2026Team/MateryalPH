@@ -130,8 +130,8 @@ An environment variable is not automatically secret. Anything placed in a web or
 | S3 access key/secret | API only | Yes | Bucket-scoped, least privilege |
 | Sentry DSN | Each app | Usually public identifier | Separate project/environment; do not put auth token in clients |
 | Sentry auth token | CI only | Yes | Used only for release/source-map tasks |
-| reCAPTCHA site key | Client | No | Domain/app restricted |
-| reCAPTCHA secret | API only | Yes | Never exposed to clients |
+| reCAPTCHA Enterprise checkbox key | Vendor web only | No | Restrict to the approved Vendor hostname |
+| reCAPTCHA Enterprise backend API key | API only | Yes | Restrict to `recaptchaenterprise.googleapis.com`; never expose to clients |
 
 ## 4. Backend `.env.example`
 
@@ -198,8 +198,11 @@ GOOGLE_OIDC_IOS_CLIENT_ID=
 GOOGLE_MAPS_SERVER_API_KEY=
 
 RECAPTCHA_ENABLED=false
-RECAPTCHA_SECRET_KEY=
-RECAPTCHA_MIN_SCORE=
+RECAPTCHA_GOOGLE_CLOUD_PROJECT_ID=
+RECAPTCHA_ENTERPRISE_API_KEY=
+RECAPTCHA_VENDOR_WEB_SITE_KEY=
+RECAPTCHA_VENDOR_WEB_ALLOWED_HOSTNAMES=localhost,127.0.0.1
+BOT_STEP_UP_TTL_MINUTES=5
 
 XENDIT_MODE=test
 XENDIT_SECRET_KEY=
@@ -239,7 +242,7 @@ Do not add a real value to this example. Tests must use isolated test configurat
 Only values safe to expose in a browser bundle may use `VITE_`.
 
 ```dotenv
-# apps/vendor-web/.env.example and apps/admin-web/.env.example
+# apps/vendor-web/.env.example
 VITE_APP_ENV=development
 VITE_API_BASE_URL=http://localhost:8080/api/v1
 VITE_REVERB_APP_KEY=
@@ -250,6 +253,9 @@ VITE_GOOGLE_MAPS_BROWSER_KEY=
 VITE_RECAPTCHA_SITE_KEY=
 VITE_SENTRY_DSN=
 ```
+
+Admin has no reCAPTCHA setting. Its environment contains the API, Reverb, and
+optional Sentry public values only.
 
 Never add Xendit secret keys, Google OAuth client secrets, SMTP passwords, storage secrets, Passport private keys, or Firebase service-account JSON to a Vite variable.
 
@@ -263,8 +269,7 @@ The committed `config/environment.example.json` contains empty/public build-time
   "API_BASE_URL": "http://10.0.2.2:8080/api/v1",
   "GOOGLE_OIDC_CLIENT_ID": "",
   "GOOGLE_OIDC_SERVER_CLIENT_ID": "",
-  "SENTRY_DSN": "",
-  "RECAPTCHA_SITE_KEY": ""
+  "SENTRY_DSN": ""
 }
 ```
 
@@ -464,16 +469,36 @@ Generate separate random `REVERB_APP_KEY` and `REVERB_APP_SECRET` values per env
 
 ## 14. reCAPTCHA and Sentry
 
-These are introduced only in the hardening phase.
+reCAPTCHA Enterprise checkbox protection is part of Phase 1 only for Vendor web
+email registration, password login, and password-recovery requests. Buyer,
+Admin, and Google OIDC flows are excluded.
 
 ### reCAPTCHA
 
-1. Create separate Development/Staging/Production sites or keys.
-2. Restrict each site key to its exact domains/app identifiers.
-3. Put the site key only in the relevant client environment.
-4. Put the secret only in the backend environment.
-5. Keep `RECAPTCHA_ENABLED=false` until server verification, accessible fallback, rate limiting, and error handling are implemented.
-6. Do not use reCAPTCHA as the only abuse defense.
+1. Enable the reCAPTCHA Enterprise API in the selected Google Cloud project.
+2. Create a Development Enterprise checkbox key and restrict it to the Vendor
+   hostname.
+3. Create a separate backend API key restricted to
+   `recaptchaenterprise.googleapis.com`. Development may be API-restricted only
+   because Google does not support `localhost` as an IP application restriction.
+4. Put the backend API key only in `RECAPTCHA_ENTERPRISE_API_KEY`; never put it
+   in a `VITE_` variable or Flutter configuration.
+5. Put only the Vendor checkbox site key in `VITE_RECAPTCHA_SITE_KEY`. Buyer
+   mobile has no reCAPTCHA key or plugin. Android/iOS Google OIDC client IDs are
+   separate OIDC configuration and must remain separate.
+6. Set the project ID, Vendor site key, allowed web hostnames, and five-minute
+   step-up TTL through the documented variables. Retire the
+   Classic `RECAPTCHA_SECRET_KEY`; it is not used by the Enterprise adapter.
+7. Keep `RECAPTCHA_ENABLED=false` until all required values are present. Once
+   enabled, missing configuration fails closed with `503`.
+8. Run `php scripts/recaptcha-preflight.php services/api/.env --probe-provider`
+   from the repository root. It reports variable presence and provider
+   reachability without printing keys or tokens.
+9. Run real Development checkbox-token assessments from Vendor web before
+   acceptance. The checkbox resets after submission, expiration, or provider
+   error; assessments occur only in Laravel.
+10. Keep the accessible email risk step-up, endpoint-specific rate limits, and
+    business OTPs enabled. reCAPTCHA is not the only abuse defense.
 
 ### Sentry
 

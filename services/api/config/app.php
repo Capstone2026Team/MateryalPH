@@ -54,6 +54,12 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'vendor_frontend_url' => env('FRONTEND_VENDOR_URL', 'http://localhost:5173'),
+
+    'admin_frontend_url' => env('FRONTEND_ADMIN_URL', 'http://localhost:5174'),
+
+    'buyer_redirect_uri' => env('FRONTEND_BUYER_REDIRECT_URI'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

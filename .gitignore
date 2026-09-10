@@ -2,7 +2,9 @@
 .env
 .env.*
 !.env.example
+!.env.docker.example
 !**/.env.example
+!**/.env.testing.example
 !**/*.example.json
 !**/*.example.properties
 !**/*.example.xcconfig
@@ -31,11 +33,18 @@ services/api/storage/oauth-public.key
 services/api/vendor/
 apps/*/node_modules/
 apps/*/dist/
+apps/*/playwright-report/
+apps/*/test-results/
+packages/*/node_modules/
+packages/*/dist/
+packages/api-contract/generated/dart/.dart_tool/
+packages/api-contract/generated/dart/build/
 apps/buyer-mobile/.dart_tool/
 apps/buyer-mobile/build/
 
 # Local runtime data
 services/api/storage/logs/*.log
+services/api/.env.testing
 .idea/
 .vscode/settings.local.json
 

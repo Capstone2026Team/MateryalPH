@@ -1,38 +1,963 @@
 openapi: 3.1.0
 info:
   title: MateryalPH API
-  version: 0.0.0
+  version: 1.0.0-phase.1
   description: >-
-    Repository-foundation contract. Paths are added together with implemented
-    use cases so the Laravel API and generated TypeScript/Dart clients cannot drift.
+    Versioned Phase 1 contract. FIN and MAT schemas below are foundations;
+    later-phase operations are deliberately not exposed as placeholder routes.
 servers:
   - url: /api/v1
-    description: Versioned MateryalPH API base path
+tags:
+  - name: System
+  - name: Agreements
+  - name: Authentication
 paths:
   /health:
     get:
       operationId: getApiHealth
-      summary: Read the scaffold API health status
       tags: [System]
       responses:
         "200":
           description: API process is available.
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/HealthResponse"
+              schema: { $ref: "#/components/schemas/HealthEnvelope" }
+  /agreements/current:
+    get:
+      operationId: listCurrentAgreements
+      tags: [Agreements]
+      responses:
+        "200":
+          description: Effective agreement metadata.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AgreementListEnvelope" }
+  /auth/csrf:
+    get:
+      operationId: issueWebCsrfToken
+      tags: [Authentication]
+      responses:
+        "200":
+          description: Token body plus the non-HttpOnly mp_csrf cookie.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CsrfEnvelope" }
+  /auth/register:
+    post:
+      operationId: registerAccount
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+      responses:
+        "201":
+          description: Restricted account; email verification is required.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RegistrationEnvelope" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/BotStepUpResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/verify-email:
+    post:
+      operationId: verifyEmail
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VerifyEmailRequest" }
+      responses:
+        "200":
+          description: Email ownership verified.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/verify-email/resend:
+    post:
+      operationId: resendEmailVerification
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EmailRequest" }
+      responses:
+        "200":
+          description: Generic anti-enumeration response.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/login:
+    post:
+      operationId: login
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200":
+          description: Web receives HttpOnly cookies; privileged web roles receive an MFA challenge cookie before any session is issued.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/BotStepUpResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/refresh:
+    post:
+      operationId: refreshSession
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      responses:
+        "200":
+          description: Refresh token family rotated.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/session:
+    get:
+      operationId: getSession
+      tags: [Authentication]
+      security: [{ accessCookie: [] }]
+      responses:
+        "200":
+          description: Current identity.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [Authentication]
+      security:
+        - accessCookie: []
+          webCsrf: []
+      responses:
+        "200":
+          description: Session revoked and cookies expired.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+  /auth/password/forgot:
+    post:
+      operationId: requestPasswordRecovery
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordRecoveryRequest" }
+      responses:
+        "200":
+          description: Generic anti-enumeration response.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+        "403": { $ref: "#/components/responses/BotStepUpResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/password/reset:
+    post:
+      operationId: resetPassword
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordResetRequest" }
+      responses:
+        "200":
+          description: Password changed and prior sessions revoked.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/bot-challenges/{challenge_id}/verify:
+    post:
+      operationId: verifyBotChallenge
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      parameters:
+        - in: path
+          name: challenge_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VerifyBotChallengeRequest" }
+      responses:
+        "200":
+          description: Vendor risk OTP verified; the proof is returned only in an HttpOnly cookie.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BotProofEnvelope" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/bot-challenges/{challenge_id}/resend:
+    post:
+      operationId: resendBotChallenge
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      parameters:
+        - in: path
+          name: challenge_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResendBotChallengeRequest" }
+      responses:
+        "200":
+          description: Generic anti-enumeration resend response.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/google/start:
+    post:
+      operationId: startGoogleOidc
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GoogleOidcStartRequest" }
+      responses:
+        "200":
+          description: Short-lived authorization URL using PKCE and nonce.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SuccessEnvelope" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/google/callback:
+    get:
+      operationId: completeGoogleOidc
+      tags: [Authentication]
+      parameters:
+        - in: query
+          name: state
+          required: true
+          schema: { type: string }
+        - in: query
+          name: code
+          required: true
+          schema: { type: string }
+      responses:
+        "302": { description: "Validated OIDC redirect to a web portal with HttpOnly cookies, to the Buyer app with a two-minute one-time exchange code, or to an allowlisted web portal callback with a stable error code for an expected identity/access denial." }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/register:
+    post:
+      operationId: registerBuyerMobile
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BuyerMobileRegisterRequest" }
+      responses:
+        "201":
+          description: Restricted Buyer account; email verification is required.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RegistrationEnvelope" }
+        "403": { $ref: "#/components/responses/BotStepUpResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/login:
+    post:
+      operationId: loginBuyerMobile
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BuyerMobileLoginRequest" }
+      responses:
+        "200":
+          description: Native Passport access and refresh tokens returned in the response body; no browser authentication cookie is issued.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "403": { $ref: "#/components/responses/BotStepUpResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/verify-email:
+    post:
+      operationId: verifyBuyerMobileEmail
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VerifyEmailRequest" }
+      responses:
+        "200": { description: Buyer email ownership verified, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/verify-email/resend:
+    post:
+      operationId: resendBuyerMobileEmailVerification
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/EmailRequest" }
+      responses:
+        "200": { description: Generic anti-enumeration response, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/password/forgot:
+    post:
+      operationId: requestBuyerMobilePasswordRecovery
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BuyerMobilePasswordRecoveryRequest" }
+      responses:
+        "200": { description: Generic anti-enumeration response, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+        "403": { $ref: "#/components/responses/BotStepUpResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/password/reset:
+    post:
+      operationId: resetBuyerMobilePassword
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasswordResetRequest" }
+      responses:
+        "200": { description: Buyer password changed and prior sessions revoked, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/bot-challenges/{challenge_id}/verify:
+    post:
+      operationId: verifyBuyerMobileBotChallenge
+      tags: [Authentication]
+      parameters:
+        - in: path
+          name: challenge_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/VerifyBotChallengeRequest" }
+      responses:
+        "200": { description: Buyer email risk OTP verified and one-time proof returned in the response body, content: { application/json: { schema: { $ref: "#/components/schemas/BotProofEnvelope" } } } }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/bot-challenges/{challenge_id}/resend:
+    post:
+      operationId: resendBuyerMobileBotChallenge
+      tags: [Authentication]
+      parameters:
+        - in: path
+          name: challenge_id
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ResendBotChallengeRequest" }
+      responses:
+        "200": { description: Generic anti-enumeration resend response, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/google/start:
+    post:
+      operationId: startBuyerMobileGoogleOidc
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BuyerMobileGoogleOidcStartRequest" }
+      responses:
+        "200": { description: Short-lived Buyer authorization URL using PKCE and nonce, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+        "503": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/google/exchange:
+    post:
+      operationId: exchangeBuyerMobileGoogleCode
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GoogleMobileExchangeRequest" }
+      responses:
+        "200": { description: One-time mobile exchange consumed and Passport session returned without browser cookies, content: { application/json: { schema: { $ref: "#/components/schemas/AuthEnvelope" } } } }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/refresh:
+    post:
+      operationId: refreshBuyerMobileSession
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BuyerMobileRefreshRequest" }
+      responses:
+        "200": { description: Native refresh token family rotated and replacement tokens returned in the body, content: { application/json: { schema: { $ref: "#/components/schemas/AuthEnvelope" } } } }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "422": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/session:
+    get:
+      operationId: getBuyerMobileSession
+      tags: [Authentication]
+      security: [{ passportBearer: [] }]
+      responses:
+        "200": { description: Current Buyer identity from the Bearer token, content: { application/json: { schema: { $ref: "#/components/schemas/AuthEnvelope" } } } }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+  /mobile/auth/logout:
+    post:
+      operationId: logoutBuyerMobile
+      tags: [Authentication]
+      security: [{ passportBearer: [] }]
+      responses:
+        "200": { description: Native Passport session revoked without issuing browser cookies, content: { application/json: { schema: { $ref: "#/components/schemas/SuccessEnvelope" } } } }
+  /auth/mfa/status:
+    get:
+      operationId: getMfaChallengeStatus
+      tags: [Authentication]
+      security: [{ mfaChallengeCookie: [] }]
+      responses:
+        "200":
+          description: Current privileged-login MFA requirement.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MfaStatusEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/mfa/enrollment:
+    post:
+      operationId: startMfaEnrollment
+      tags: [Authentication]
+      security:
+        - mfaChallengeCookie: []
+          webCsrf: []
+      responses:
+        "200":
+          description: One-time authenticator secret and provisioning URI. The secret is never logged or persisted in plaintext.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MfaEnrollmentEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/mfa/enrollment/confirm:
+    post:
+      operationId: confirmMfaEnrollment
+      tags: [Authentication]
+      security:
+        - mfaChallengeCookie: []
+          webCsrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MfaCodeRequest" }
+      responses:
+        "200":
+          description: MFA enrolled, Passport session issued, and replacement recovery codes shown once.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "409": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/mfa/challenge:
+    post:
+      operationId: completeMfaChallenge
+      tags: [Authentication]
+      security:
+        - mfaChallengeCookie: []
+          webCsrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MfaCodeRequest" }
+      responses:
+        "200":
+          description: TOTP verified and Passport session issued.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/mfa/recovery:
+    post:
+      operationId: recoverMfaChallenge
+      tags: [Authentication]
+      security:
+        - mfaChallengeCookie: []
+          webCsrf: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MfaRecoveryRequest" }
+      responses:
+        "200":
+          description: Single-use recovery code consumed, Passport session issued, and all recovery codes replaced.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthEnvelope" }
+        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "429": { $ref: "#/components/responses/ErrorResponse" }
+  /auth/admin-invitations/accept:
+    post:
+      operationId: acceptAdminInvitation
+      tags: [Authentication]
+      security: [{ webCsrf: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AdminInvitationRequest" }
+      responses:
+        "201":
+          description: Admin identity created; MFA enrollment is the next required step.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RegistrationEnvelope" }
+        "410": { $ref: "#/components/responses/ErrorResponse" }
 components:
+  securitySchemes:
+    passportBearer: { type: http, scheme: bearer, bearerFormat: JWT }
+    accessCookie: { type: apiKey, in: cookie, name: mp_access }
+    mfaChallengeCookie: { type: apiKey, in: cookie, name: mp_mfa_challenge }
+    botProofCookie: { type: apiKey, in: cookie, name: mp_bot_proof }
+    webCsrf: { type: apiKey, in: header, name: X-CSRF-Token }
+  responses:
+    ErrorResponse:
+      description: Safe structured error with X-Correlation-ID response header.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+    BotStepUpResponse:
+      description: The requested auth operation requires a short-lived email risk-verification step.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/BotStepUpErrorEnvelope" }
   schemas:
-    HealthResponse:
+    Meta: { type: object, additionalProperties: true }
+    ApiError:
       type: object
-      additionalProperties: false
-      required: [status, service, timestamp]
+      required: [code, message, details]
       properties:
-        status:
+        code: { type: string }
+        message: { type: string }
+        field: { type: [string, "null"] }
+        correlation_id: { type: [string, "null"] }
+        details: { type: object, additionalProperties: true }
+    ErrorEnvelope:
+      type: object
+      required: [data, meta, errors]
+      properties:
+        data: { type: [object, "null"], additionalProperties: false }
+        meta: { $ref: "#/components/schemas/Meta" }
+        errors:
+          type: array
+          minItems: 1
+          items: { $ref: "#/components/schemas/ApiError" }
+    SuccessEnvelope:
+      type: object
+      required: [data, meta, errors]
+      properties:
+        data: { type: object, additionalProperties: true }
+        meta: { $ref: "#/components/schemas/Meta" }
+        errors: { type: array, maxItems: 0 }
+    HealthEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [status, service, timestamp]
+              properties:
+                status: { type: string, const: ok }
+                service: { type: string, const: materyalph-api }
+                timestamp: { type: string, format: date-time }
+    Agreement:
+      type: object
+      required: [id, code, title, audience, version, content_uri, effective_at]
+      properties:
+        id: { type: string, format: uuid }
+        code: { type: string }
+        title: { type: string }
+        audience: { type: string }
+        version: { type: integer, minimum: 1 }
+        content_uri: { type: string }
+        effective_at: { type: string, format: date-time }
+    AgreementListEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data: { type: array, items: { $ref: "#/components/schemas/Agreement" } }
+    CsrfEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [csrf_token]
+              properties: { csrf_token: { type: string } }
+    AccountType: { type: string, enum: [BUYER, VENDOR, ADMIN] }
+    EmailRequest:
+      type: object
+      required: [email]
+      properties: { email: { type: string, format: email, maxLength: 254 } }
+    RegisterRequest:
+      type: object
+      description: Vendor web registration. The WEB transport is selected by the server route.
+      required: [full_name, email, mobile_e164, password, password_confirmation, business_name, terms_accepted, privacy_accepted]
+      properties:
+        full_name: { type: string, maxLength: 160 }
+        email: { type: string, format: email, maxLength: 254 }
+        mobile_e164: { type: string, pattern: '^\+[1-9]\d{7,14}$' }
+        password: { type: string, format: password, minLength: 12 }
+        password_confirmation: { type: string, format: password }
+        business_name: { type: string, maxLength: 180 }
+        terms_accepted: { type: boolean, const: true }
+        privacy_accepted: { type: boolean, const: true }
+        bot_protection:
+          allOf: [{ $ref: "#/components/schemas/VendorBotProtectionEvidence" }]
+          description: Vendor checkbox or accessible email fallback evidence.
+    BuyerMobileRegisterRequest:
+      type: object
+      description: Buyer-native registration. The BUYER/MOBILE transport is selected by the server route and contains no CAPTCHA evidence.
+      required: [full_name, email, mobile_e164, password, password_confirmation, buyer_type, terms_accepted, privacy_accepted]
+      properties:
+        full_name: { type: string, maxLength: 160 }
+        email: { type: string, format: email, maxLength: 254 }
+        mobile_e164: { type: string, pattern: '^\+[1-9]\d{7,14}$' }
+        password: { type: string, format: password, minLength: 12 }
+        password_confirmation: { type: string, format: password }
+        buyer_type: { type: string, maxLength: 32 }
+        company_name: { type: [string, "null"], maxLength: 180 }
+        terms_accepted: { type: boolean, const: true }
+        privacy_accepted: { type: boolean, const: true }
+        risk_proof_token:
           type: string
-          const: ok
-        service:
+          maxLength: 128
+          writeOnly: true
+          description: Buyer-only proof returned after a server-issued email risk challenge; this is not CAPTCHA evidence.
+    VerifyEmailRequest:
+      type: object
+      required: [email, code]
+      properties:
+        email: { type: string, format: email }
+        code: { type: string, pattern: '^\d{6}$' }
+    LoginRequest:
+      type: object
+      description: Vendor/Admin browser login. The WEB transport is selected by the server route.
+      required: [email, password, portal]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+        portal: { type: string, enum: [VENDOR, ADMIN] }
+        bot_protection:
+          allOf: [{ $ref: "#/components/schemas/VendorBotProtectionEvidence" }]
+          description: Vendor web password login only; prohibited for Admin login.
+    BuyerMobileLoginRequest:
+      type: object
+      description: Buyer-native login. The BUYER/MOBILE transport is selected by the server route and contains no CAPTCHA evidence.
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+        device_id: { type: [string, "null"], format: uuid }
+        risk_proof_token:
           type: string
-        timestamp:
+          maxLength: 128
+          writeOnly: true
+          description: Buyer-only proof returned after a server-issued email risk challenge; this is not CAPTCHA evidence.
+    VendorBotProtectionEvidence:
+      type: object
+      description: >-
+        Vendor web only. Supply a checkbox token or explicitly request the accessible
+        email fallback. After successful email risk verification, an empty object is
+        permitted because the one-time proof is carried in the HttpOnly mp_bot_proof cookie.
+      properties:
+        recaptcha_token: { type: string, maxLength: 8192, writeOnly: true }
+        request_email_step_up:
+          type: boolean
+          not: { const: false }
+          description: Must be true when the accessible email step-up method is selected.
+      oneOf:
+        - required: [recaptcha_token]
+        - required: [request_email_step_up]
+        - maxProperties: 0
+    PasswordRecoveryRequest:
+      type: object
+      description: Vendor/Admin browser password recovery. The WEB transport is selected by the server route.
+      required: [email, portal]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        portal: { type: string, enum: [VENDOR, ADMIN] }
+        bot_protection:
+          allOf: [{ $ref: "#/components/schemas/VendorBotProtectionEvidence" }]
+          description: Vendor web password recovery only; prohibited for Admin recovery.
+    BuyerMobilePasswordRecoveryRequest:
+      type: object
+      description: Buyer-native password recovery. The BUYER/MOBILE transport is selected by the server route and contains no CAPTCHA evidence.
+      required: [email]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        risk_proof_token:
           type: string
-          format: date-time
+          maxLength: 128
+          writeOnly: true
+          description: Buyer-only proof returned after a server-issued email risk challenge; this is not CAPTCHA evidence.
+    VerifyBotChallengeRequest:
+      type: object
+      required: [email, code]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+        code: { type: string, pattern: '^\d{6}$' }
+    ResendBotChallengeRequest:
+      type: object
+      required: [email]
+      properties:
+        email: { type: string, format: email, maxLength: 254 }
+    BotProofEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [verified, expires_in]
+              properties:
+                verified: { type: boolean, const: true }
+                expires_in: { type: integer, minimum: 1 }
+                step_up_token: { type: string, writeOnly: true }
+    BotStepUpErrorEnvelope:
+      type: object
+      required: [data, meta, errors]
+      properties:
+        data: { type: [object, "null"] }
+        meta: { type: object, additionalProperties: true }
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 1
+          items:
+            title: BotStepUpErrorEnvelope_allOf_errors
+            type: object
+            required: [code, message, details]
+            properties:
+              code: { type: string, enum: [BOT_STEP_UP_REQUIRED] }
+              message: { type: string }
+              details:
+                title: BotStepUpErrorEnvelope_allOf_errors_allOf_details
+                type: object
+                required: [challenge_id, expires_at, resend_after_seconds]
+                properties:
+                  challenge_id: { type: string, format: uuid }
+                  expires_at: { type: string, format: date-time }
+                  resend_after_seconds: { type: integer, minimum: 0 }
+    MfaCodeRequest:
+      type: object
+      required: [code]
+      properties:
+        code: { type: string, pattern: '^\d{6}$' }
+    MfaRecoveryRequest:
+      type: object
+      required: [recovery_code]
+      properties:
+        recovery_code: { type: string, maxLength: 32, writeOnly: true }
+    BuyerMobileRefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token: { type: string, writeOnly: true, maxLength: 512 }
+    PasswordResetRequest:
+      type: object
+      required: [email, code, password, password_confirmation]
+      properties:
+        email: { type: string, format: email }
+        code: { type: string, pattern: '^\d{6}$' }
+        password: { type: string, format: password, minLength: 12 }
+        password_confirmation: { type: string, format: password }
+    GoogleOidcStartRequest:
+      type: object
+      description: Vendor/Admin browser Google OIDC start. The WEB transport is selected by the server route.
+      required: [portal, mode]
+      properties:
+        portal: { type: string, enum: [VENDOR, ADMIN] }
+        mode: { type: string, enum: [SIGN_IN, SIGN_UP] }
+        mobile_e164: { type: [string, "null"] }
+        business_name: { type: [string, "null"] }
+        terms_accepted: { type: boolean }
+        privacy_accepted: { type: boolean }
+    BuyerMobileGoogleOidcStartRequest:
+      type: object
+      description: Buyer-native Google OIDC start. The BUYER/MOBILE transport is selected by the server route.
+      required: [mode]
+      properties:
+        mode: { type: string, enum: [SIGN_IN, SIGN_UP] }
+        mobile_e164: { type: [string, "null"] }
+        buyer_type: { type: [string, "null"] }
+        company_name: { type: [string, "null"], maxLength: 180 }
+        terms_accepted: { type: boolean }
+        privacy_accepted: { type: boolean }
+    GoogleMobileExchangeRequest:
+      type: object
+      required: [exchange_code]
+      properties:
+        exchange_code: { type: string, writeOnly: true, maxLength: 128 }
+        device_id: { type: [string, "null"], format: uuid }
+    AdminInvitationRequest:
+      type: object
+      required: [token, full_name, password, password_confirmation, terms_accepted, privacy_accepted]
+      properties:
+        token: { type: string, writeOnly: true }
+        full_name: { type: string, maxLength: 160 }
+        password: { type: string, format: password, minLength: 14 }
+        password_confirmation: { type: string, format: password }
+        terms_accepted: { type: boolean, const: true }
+        privacy_accepted: { type: boolean, const: true }
+    UserIdentity:
+      type: object
+      required: [id, name, email, account_type]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        email: { type: string, format: email }
+        account_type: { $ref: "#/components/schemas/AccountType" }
+    AuthEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                user: { $ref: "#/components/schemas/UserIdentity" }
+                session_id: { type: string, format: uuid }
+                access_token: { type: string, writeOnly: true }
+                refresh_token: { type: string, writeOnly: true }
+                access_expires_in: { type: integer }
+                refresh_expires_in: { type: integer }
+                mfa_setup_required: { type: boolean }
+                mfa_required: { type: boolean }
+                mfa_enrollment_required: { type: boolean }
+                challenge_expires_in: { type: integer, minimum: 1 }
+                recovery_codes:
+                  type: array
+                  description: Present only immediately after enrollment or recovery; store offline because these values are not returned again.
+                  items: { type: string, writeOnly: true }
+    MfaStatusEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [mfa_required, mfa_enrollment_required]
+              properties:
+                mfa_required: { type: boolean, const: true }
+                mfa_enrollment_required: { type: boolean }
+    MfaEnrollmentEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              required: [secret, provisioning_uri]
+              properties:
+                secret: { type: string, writeOnly: true }
+                provisioning_uri: { type: string, writeOnly: true }
+    RegistrationEnvelope:
+      allOf:
+        - $ref: "#/components/schemas/SuccessEnvelope"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                user_id: { type: string, format: uuid }
+                verification_required: { type: boolean }
+                next: { type: string }
+    FinancialSnapshot:
+      type: object
+      description: Immutable FIN money snapshot; every amount is integer centavos.
+      required: [id, order_id, environment, materials_gross_centavos, vendor_discount_centavos, materials_vat_centavos, delivery_centavos, processing_fee_centavos, nrpc_centavos, buyer_total_centavos, calculation_hash]
+      properties:
+        id: { type: string, format: uuid }
+        order_id: { type: string, format: uuid }
+        environment: { type: string, enum: [TEST, DEMO, LIVE] }
+        materials_gross_centavos: { type: integer, format: int64, minimum: 0 }
+        vendor_discount_centavos: { type: integer, format: int64, minimum: 0 }
+        materials_vat_centavos: { type: integer, format: int64, minimum: 0 }
+        delivery_centavos: { type: integer, format: int64, minimum: 0 }
+        processing_fee_centavos: { type: integer, format: int64, minimum: 0 }
+        nrpc_centavos: { type: integer, format: int64, minimum: 0 }
+        buyer_total_centavos: { type: integer, format: int64, minimum: 0 }
+        calculation_hash: { type: string }
+    FeeAssessment:
+      type: object
+      description: Vendor commission liability, separate from buyer processing fees and monthly settlement.
+      required: [id, order_id, commission_basis_centavos, commission_basis_points, earned_centavos, state]
+      properties:
+        id: { type: string, format: uuid }
+        order_id: { type: string, format: uuid }
+        commission_basis_centavos: { type: integer, format: int64, minimum: 0 }
+        commission_basis_points: { type: integer, const: 200 }
+        earned_centavos: { type: integer, format: int64, minimum: 0 }
+        state: { type: string }
+    MaterialPriceObservation:
+      type: object
+      description: Public Tier 2 ordinary listing observation; never transaction-price evidence.
+      required: [id, run_id, environment, dataset_id, vendor_id, listing_variant_id, comparable_group_version_id, observed_at, local_snapshot_date, ordinary_payable_centavos, normalized_php_price, eligibility_version]
+      properties:
+        id: { type: string, format: uuid }
+        run_id: { type: string, format: uuid }
+        environment: { type: string, enum: [TEST, DEMO] }
+        dataset_id: { type: string }
+        vendor_id: { type: string, format: uuid }
+        listing_variant_id: { type: string, format: uuid }
+        comparable_group_version_id: { type: string, format: uuid }
+        observed_at: { type: string, format: date-time }
+        local_snapshot_date: { type: string, format: date }
+        ordinary_payable_centavos: { type: integer, format: int64, minimum: 1 }
+        normalized_php_price: { type: string, pattern: '^\d+(\.\d{1,8})?$' }
+        eligibility_version: { type: string }

@@ -2,5 +2,14 @@
   "name": "@materyalph/api-contract",
   "private": true,
   "version": "0.0.0",
-  "description": "OpenAPI 3.1 source and generated-client boundary for MateryalPH"
+  "description": "OpenAPI 3.1 source and generated-client boundary for MateryalPH",
+  "scripts": {
+    "validate": "openapi-generator-cli validate -i openapi.yaml",
+    "generate:typescript": "openapi-generator-cli generate -i openapi.yaml -g typescript-fetch -o generated/typescript --additional-properties npmName=@materyalph/api-client-ts --additional-properties supportsES6=true --additional-properties typescriptThreePlus=true",
+    "generate:dart": "openapi-generator-cli generate -i openapi.yaml -g dart-dio -o generated/dart --additional-properties pubName=materyalph_api_client --additional-properties pubVersion=1.0.0",
+    "generate": "node scripts/generate-clients.mjs"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.41.0"
+  }
 }
