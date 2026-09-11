@@ -29,11 +29,12 @@ describe('Vendor public portal', () => {
     render(<App />)
 
     expect(screen.getByRole('heading', { name: 'Build your store’s next chapter.' })).toBeVisible()
+    fireEvent.click(screen.getByText('What does Vendor verification provide?'))
     expect(screen.getByText(/Tier 1 supplier is a directory presence only/i)).toBeVisible()
     expect(screen.getByText('2% monthly')).toBeVisible()
     expect(screen.queryByText(/TEST\/DEMO only/i)).not.toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: /register your store/i }).at(0)).toHaveAttribute('href', '/register')
-    expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login')
+    expect(screen.getAllByRole('link', { name: 'Sign in' })[0]).toHaveAttribute('href', '/login')
   })
 
   test('exposes operable navigation and FAQ controls', () => {

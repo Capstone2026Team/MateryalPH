@@ -1,254 +1,94 @@
-import {
-  ArrowRight,
-  BadgeCheck,
-  Boxes,
-  Building2,
-  ChevronDown,
-  ClipboardCheck,
-  FileCheck2,
-  Handshake,
-  LockKeyhole,
-  MapPinned,
-  PackageCheck,
-  ReceiptText,
-  Search,
-  ShieldCheck,
-  Star,
-  Users,
-} from 'lucide-react'
+import { ArrowRight, BadgeCheck, Boxes, ChevronDown, ClipboardCheck, FileCheck2, LockKeyhole, MapPinned, MessageSquare, PackageCheck, ReceiptText, ShieldCheck, Store, Users } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { BrandHeader } from '../components/BrandHeader'
-import { SiteFooter } from '../components/SiteFooter'
+import './VendorLandingPage.css'
 
 const benefits = [
-  {
-    icon: Building2,
-    title: 'Reach serious project buyers',
-    text: 'Receive item orders and direct inquiries tied to structured Work Packages—not an open bidding queue.',
-  },
-  {
-    icon: Boxes,
-    title: 'Keep catalog and stock decisions yours',
-    text: 'Publish approved variants, ordinary prices, and availability while exact inventory stays private.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Build visible marketplace trust',
-    text: 'Verification, fulfillment history, and eligible verified-purchase reviews support your Vendor Performance Score.',
-  },
-] as const
-
-const features = [
-  { title: 'Verified digital storefront', text: 'Present approved store details and published listings as a Tier 2 Vendor.', icon: Building2 },
-  { title: 'Catalog and variants', text: 'Structure products by canonical material, unit, brand, model, and controlled specifications.', icon: Boxes },
-  { title: 'Inventory controls', text: 'Track on-hand and hard-reserved quantities. Cart placement and quotation soft holds never reserve stock.', icon: PackageCheck },
-  { title: 'Order operations', text: 'Confirm item orders, review NRPC manually when enabled, and move fulfillment through approved states.', icon: ClipboardCheck },
-  { title: 'Project inquiries', text: 'Reply to eligible Buyer Work Package inquiries with immutable, versioned quotations.', icon: FileCheck2 },
-  { title: 'Messages in context', text: 'Keep Buyer conversations attached to listings, orders, and Work Packages.', icon: Users },
-  { title: 'Product compliance', text: 'Submit applicable regulated-material evidence for review before publication.', icon: ShieldCheck },
-  { title: 'Vendor team accounts', text: 'Assign one approved role per user with explicit Store Manager delegation.', icon: Users },
-  { title: 'Reputation evidence', text: 'Understand the verified signals behind VCS, MQS, OHS, and your composite VPS.', icon: Star },
-] as const
-
-const onboardingSteps = [
-  ['Create the Owner account', 'Accept the versioned Terms and Privacy Notice separately.'],
-  ['Verify the account', 'Confirm email ownership and enroll required Owner multi-factor authentication.'],
-  ['Provide business details', 'Add the store, location, ownership, and required private documents.'],
-  ['Complete Vendor review', 'An authorized Admin records the verification decision and reason.'],
-  ['Complete payment onboarding', 'When online commerce is enabled, satisfy the configured Vendor payment-account requirements.'],
-  ['Configure the storefront', 'Add approved variants, ordinary prices, inventory, service area, and fulfillment methods.'],
-  ['Receive eligible opportunities', 'Confirm item orders or respond directly to selected Work Package inquiries.'],
-] as const
-
+  { icon: MapPinned, title: 'Be found by buyers building nearby', text: 'Give contractors and material buyers a clearer way to discover your store, location and approved products.' },
+  { icon: MessageSquare, title: 'Turn questions into clear requirements', text: 'Keep conversations connected to the materials, order or project a Buyer is asking about.' },
+  { icon: BadgeCheck, title: 'Build trust with a documented track record', text: 'Store verification, completed orders and eligible purchase reviews help Buyers make informed decisions.' },
+]
+const steps = [
+  ['Create your Owner account', 'Have your name, business name, email and mobile number ready. Review the Terms and Privacy Notice.'],
+  ['Verify and secure your access', 'Verify email ownership and set up the required authenticator-based security for your Owner account.'],
+  ['Prepare your store for review', 'Provide store details, location and required business documents. Complete the applicable activation requirements.'],
+  ['Prepare your product listings', 'Add materials, variants, prices and fulfillment options. Complete any required product compliance review.'],
+  ['Connect with eligible Buyers', 'After activation, receive item orders and respond to direct project inquiries with clear quotations.'],
+  ['Build your store’s reputation', 'Keep information current, communicate clearly and fulfill accepted orders. Eligible reviews build your record.'],
+]
 const questions = [
-  ['Who can register as a Vendor?', 'Eligible independent hardware stores and construction-material suppliers may create an Owner account, subject to the approved identity, business, location, and verification requirements.'],
-  ['What does Vendor verification provide?', 'An approved Vendor can become a Tier 2 authenticated storefront. Verification is reviewed and does not guarantee sales, ranking, or Buyer selection.'],
-  ['What should I prepare before registering?', 'Have your Owner contact details and business name ready. Verify your email and set up an authenticator to protect access to your account.'],
-  ['When is the 2% commission charged?', 'It is assessed on the approved completed-materials basis and included in monthly Vendor billing. It is separate from Buyer payment-processing fees and configurable withholding scenarios.'],
-  ['Are processing fees included in the 2%?', 'No. Third-party payment-processing fees are separate and depend on the configured provider and payment method. MateryalPH does not invent a universal processing rate.'],
-  ['Does registration activate my store immediately?', 'No. Creating an account is the first step. Store verification and activation requirements must be completed before your store is published.'],
-  ['Can every product be published immediately?', 'No. Regulated categories require the applicable evidence and an approved compliance decision before publication.'],
-  ['How do Buyers contact my store?', 'Eligible Buyers can message within listing, order, or Work Package context and may send a direct Work Package inquiry. There is no public reverse-auction queue.'],
-  ['Can I send quotations?', 'Eligible Vendors can respond to direct project inquiries using immutable quotation versions. Editing a published quotation creates a new version.'],
-  ['Can staff manage the store?', 'Yes, after Owner setup. Each Vendor user has one approved role; Store Manager delegation is explicit and disabled by default.'],
+  ['Getting started', [
+    ['Who can register as a Vendor?', 'Independent hardware stores and construction-material suppliers can create a Vendor Owner account, subject to the required identity, business, location and verification checks.'],
+    ['What should I prepare before registering?', 'Start with your Owner name, business or store name, email and mobile number. Have access to your email and an authenticator app. Store review later requires the applicable business, ownership and location evidence.'],
+    ['What happens after I create my store account?', 'Complete email verification and required account security. Your account is the starting point for preparing store information and activation requirements; it does not publish a storefront automatically.'],
+    ['Does registration activate my store immediately?', 'No. Registration creates your account. Store activation is reviewed before publication, and the applicable verification and readiness requirements must be completed.'],
+  ]],
+  ['Your store and Buyers', [
+    ['What does Vendor verification provide?', 'An approved Tier 2 Vendor has an authenticated storefront and access to eligible marketplace capabilities after activation. Verification supports informed Buyer decisions; it does not guarantee sales or ranking. A Tier 1 supplier is a directory presence only and cannot transact on MateryalPH.'],
+    ['Can every product be published immediately?', 'No. Product listings must meet the applicable publication requirements. Regulated materials need the required reviewed PS Mark or ICC evidence before publication. Store approval does not replace product compliance review.'],
+    ['How do Buyers contact my store?', 'Eligible Buyers can start conversations linked to listings, orders or project Work Packages. Project inquiries are sent directly to selected Vendors with the Buyer’s material and fulfillment requirements.'],
+    ['Can I send quotations?', 'Eligible Vendors can respond to direct Work Package inquiries with a quotation. Revisions create a new version so Buyers can clearly see and accept the current offer.'],
+    ['Can my store improve visibility on the platform?', 'Accurate listings, approved store details, responsive communication and eligible fulfillment/review evidence help Buyers evaluate your store. Visibility follows the platform’s rules; registration does not promise placement or a sales volume.'],
+  ]],
+  ['Payments and account security', [
+    ['When is the 2% commission charged?', 'It is assessed on the approved completed-materials basis and included in monthly Vendor billing. Vendor discounts are considered and included material VAT is excluded. Payment processing, refunds and dispute adjustments have separate records.'],
+    ['Are processing fees included in the 2%?', 'No. The Vendor-paid 2% platform commission and third-party payment-processing fees are separate. Processing charges vary by payment method and provider; there is no single processing rate shown in this example.'],
+    ['How are refunds and dispute adjustments handled?', 'Refunds and concluded-dispute adjustments are recorded separately from payment-processing fees and commission. Approved changes refer back to the original transaction and may lead to a corresponding commission adjustment.'],
+    ['Do I need to verify my email?', 'Email/password registration requires email verification. A valid verified Google email satisfies email ownership verification when you register with Google. You still complete the remaining Vendor account requirements.'],
+    ['Why do I need authenticator-based security?', 'Vendor Owner access uses an authenticator as an additional account safeguard. Save your recovery codes securely during setup so you have the supported recovery option if your authenticator becomes unavailable.'],
+    ['What happens if I forget my password?', 'Use Forgot password on the Vendor sign-in page and follow the instructions sent to your registered email. A password reset does not remove the account’s required authenticator security.'],
+  ]],
 ] as const
+const previews = [
+  { label: 'Storefront', icon: Store, title: 'Your materials. A clearer digital presence.', text: 'Present approved products with useful specifications, prices and availability. Exact inventory stays private.', rows: [['Portland cement', '40 kg · Per bag'], ['Deformed steel bar', '12 mm · Per length'], ['Concrete hollow block', '6 in · Per piece']] },
+  { label: 'Inquiries', icon: MessageSquare, title: 'A project brief you can respond to.', text: 'Review direct Work Package inquiries with material quantities and fulfillment needs, then prepare a versioned quotation.', rows: [['Material requirements', 'Cement, steel and blocks'], ['Requested fulfillment', 'Delivery to project site'], ['Vendor response', 'Quotation with clear terms']] },
+  { label: 'Orders', icon: ClipboardCheck, title: 'Keep the next action in view.', text: 'Review item orders, confirm availability and follow the approved fulfillment steps with a documented transaction history.', rows: [['Review', 'Check the order requirements'], ['Confirm', 'Accept through the approved flow'], ['Fulfill', 'Record delivery or pickup']] },
+]
 
 export function VendorLandingPage() {
-  return (
-    <>
-      <BrandHeader />
-      <main id="main-content">
-        <Hero />
-        <Benefits />
-        <Verification />
-        <Features />
-        <HowItWorks />
-        <Compliance />
-        <Opportunities />
-        <Fees />
-        <DashboardPreview />
-        <Reputation />
-        <Faq />
-        <FinalCallToAction />
-      </main>
-      <SiteFooter />
-    </>
-  )
-}
-
-function Hero() {
-  return (
-    <section className="hero">
-      <div className="hero__copy">
-        <h1>Build your store’s next chapter.</h1>
-        <p>A marketplace for Philippine hardware stores and material suppliers. Start your Owner account and prepare to connect with Buyers building their next project.</p>
-        <div className="hero__actions">
-          <Link className="button button--primary" to="/register">Register your store <ArrowRight aria-hidden="true" /></Link>
-          <a className="button button--secondary" href="#how-it-works">See how it works</a>
+  const root = useRef<HTMLDivElement>(null)
+  const [preview, setPreview] = useState(0)
+  useEffect(() => {
+    const element = root.current
+    if (typeof window.matchMedia !== 'function' || !element) return
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (motion.matches || !('IntersectionObserver' in window) || typeof element.animate !== 'function') return
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.animate([{ opacity: .65, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 450, easing: 'cubic-bezier(.16,1,.3,1)' }); observer.unobserve(entry.target) }
+    }), { threshold: .1 })
+    element.querySelectorAll('[data-reveal]').forEach(node => observer.observe(node))
+    const stopMotion = () => { observer.disconnect(); element.getAnimations({ subtree: true }).forEach(animation => animation.cancel()) }
+    motion.addEventListener('change', stopMotion)
+    return () => { stopMotion(); motion.removeEventListener('change', stopMotion) }
+  }, [])
+  const selected = previews[preview] ?? previews[0]!
+  return <div className="vendor-landing" ref={root}>
+    <BrandHeader />
+    <main id="main-content">
+      <section className="lp-hero lp-container">
+        <div className="lp-hero-copy">
+          <h1>Build your store’s <em>next chapter.</em></h1>
+          <p>Bring your materials closer to the people building the Philippines. Showcase your store, connect with project Buyers and give every inquiry a clearer path forward.</p>
+          <div className="hero__actions lp-actions"><Link className="button button--primary" to="/register">Register your store <ArrowRight aria-hidden="true" /></Link><a className="button button--secondary" href="#how-it-works">See how it works</a></div>
+          <p className="lp-hero-note"><ShieldCheck aria-hidden="true" /> Start with an Owner account. Store activation is reviewed.</p>
         </div>
-        <ul className="hero__proof" aria-label="Marketplace safeguards">
-          <li><BadgeCheck aria-hidden="true" /> Verified Vendor activation</li>
-          <li><LockKeyhole aria-hidden="true" /> Private compliance files</li>
-          <li><ReceiptText aria-hidden="true" /> Traceable payment records</li>
-        </ul>
-      </div>
-      <div className="opportunity-sheet" aria-label="Illustrative project inquiry preview">
-        <div className="opportunity-sheet__topline"><span>Illustrative inquiry</span><strong>New inquiry</strong></div>
-        <h2>Two-storey residence · Structural materials</h2>
-        <p className="opportunity-sheet__location"><MapPinned aria-hidden="true" /> Quezon City · Delivery requested</p>
-        <div className="material-line"><span>Portland cement · 40 kg</span><strong>180 bags</strong></div>
-        <div className="material-line"><span>Deformed steel bar · 12 mm</span><strong>96 lengths</strong></div>
-        <div className="material-line"><span>Concrete hollow block · 6 in</span><strong>1,200 pcs</strong></div>
-        <div className="opportunity-sheet__footer"><span><Search aria-hidden="true" /> Direct Buyer inquiry</span><span className="status-chip">Quotation open</span></div>
-      </div>
-    </section>
-  )
-}
-
-function Benefits() {
-  return (
-    <section className="benefit-band" id="benefits" aria-labelledby="benefits-title">
-      <h2 id="benefits-title">Built around the way material stores actually operate</h2>
-      <div className="benefit-list">
-        {benefits.map(({ icon: Icon, title, text }) => <article key={title}><Icon aria-hidden="true" /><div><h3>{title}</h3><p>{text}</p></div></article>)}
-      </div>
-    </section>
-  )
-}
-
-function Verification() {
-  return (
-    <section className="verification-story" aria-labelledby="verified-title">
-      <div>
-        <h2 id="verified-title">Verification earns access—and gives Buyers a reason to trust you.</h2>
-        <p>A Verified (Tier 2) Vendor has an authenticated storefront and can use approved marketplace capabilities after review. A Tier 1 supplier is a directory presence only and cannot sign in or transact through MateryalPH.</p>
-        <Link className="text-link" to="/verification">Review verification requirements <ArrowRight aria-hidden="true" /></Link>
-      </div>
-      <ol className="verification-track">
-        <li><span><FileCheck2 aria-hidden="true" /></span><div><strong>Submit</strong><p>Owner, store, business, location, and required private evidence.</p></div></li>
-        <li><span><ShieldCheck aria-hidden="true" /></span><div><strong>Review</strong><p>Authorized Admin reviewers record a reasoned decision.</p></div></li>
-        <li><span><BadgeCheck aria-hidden="true" /></span><div><strong>Activate</strong><p>Complete catalog, fulfillment, and enabled payment readiness.</p></div></li>
-      </ol>
-    </section>
-  )
-}
-
-function Features() {
-  return (
-    <section className="feature-section" id="features" aria-labelledby="feature-title">
-      <div className="section-heading"><h2 id="feature-title">Designed around your store’s workflow</h2><p>Explore the marketplace experience planned for eligible, activated stores. Account registration is the first step; verification comes before publication.</p></div>
-      <div className="feature-grid">{features.map(({ title, text, icon: Icon }) => <article key={title}><Icon aria-hidden="true" /><h3>{title}</h3><p>{text}</p></article>)}</div>
-    </section>
-  )
-}
-
-function HowItWorks() {
-  return (
-    <section className="how-section" id="how-it-works" aria-labelledby="how-title">
-      <div className="section-heading"><h2 id="how-title">From registration to marketplace eligibility</h2><p>Your store stays in control of acceptance, pricing, fulfillment, and staff permissions at every stage.</p></div>
-      <ol className="how-flow">{onboardingSteps.map(([title, description]) => <li key={title}><strong>{title}</strong><span>{description}</span></li>)}</ol>
-    </section>
-  )
-}
-
-function Compliance() {
-  return (
-    <section className="compliance-section" aria-labelledby="compliance-title">
-      <div className="compliance-symbol"><ShieldCheck aria-hidden="true" /></div>
-      <div>
-        <h2 id="compliance-title">Regulated materials need evidence before publication.</h2>
-        <p>Applicable DTI-BPS regulated materials require reviewed PS Mark or ICC evidence. Photo/OCR-assisted entry, QR input, or manual entry may help submit details, but MateryalPH does not issue marks, stickers, government certificates, or regulatory approval.</p>
-        <p>Business evidence is handled privately and made available only to authorized reviewers.</p>
-      </div>
-      <Link className="button button--secondary" to="/verification">What you may need</Link>
-    </section>
-  )
-}
-
-function Opportunities() {
-  return (
-    <section className="opportunity-section" aria-labelledby="opportunities-title">
-      <div className="section-heading"><h2 id="opportunities-title">Two paths to qualified demand</h2><p>MateryalPH does not run a public Vendor RFQ bidding queue.</p></div>
-      <div className="opportunity-columns">
-        <article><PackageCheck aria-hidden="true" /><h3>Item-Based orders</h3><p>Buyers compare eligible listings, build a cart, and receive one child order per Vendor at checkout.</p><ul><li>Cart placement does not reserve stock</li><li>Auto-accept is optional, item-only, and disabled with NRPC</li><li>Vendor confirmation rules stay visible</li></ul></article>
-        <article><Handshake aria-hidden="true" /><h3>Project Work Package inquiries</h3><p>Eligible Buyers contact selected Vendors directly for a scoped package of materials and delivery needs.</p><ul><li>Versioned quotation and counter-offer trail</li><li>One selected Vendor outcome per Work Package</li><li>No anonymous reverse auction</li></ul></article>
-      </div>
-    </section>
-  )
-}
-
-function Fees() {
-  return (
-    <section className="fees-section" id="payments-fees" aria-labelledby="fees-title">
-      <div>
-        <h2 id="fees-title">Plain-language payments and fees, before you commit</h2>
-        <p>Understand the costs associated with your store. Vendor commission and payment-processing fees are separate charges, with a clear basis for each.</p>
-        <p>The approved Vendor-paid platform commission is <strong>2%</strong> of the completed-materials basis after Vendor discounts and excluding included Vendor VAT. It becomes a separate Vendor liability billed on the approved monthly cycle.</p>
-        <p>Third-party processing fees are distinct and vary by payment method and provider. Review the applicable fee breakdown and tax treatment before proceeding.</p>
-        <Link className="text-link" to="/fees">Read the payment and fee breakdown <ArrowRight aria-hidden="true" /></Link>
-      </div>
-      <dl>
-        <div><dt>Vendor commission</dt><dd>2% monthly</dd></div>
-        <div><dt>Provider processing fees</dt><dd>Separate, method-dependent</dd></div>
-        <div><dt>Billing clarity</dt><dd>Commission shown separately</dd></div>
-      </dl>
-    </section>
-  )
-}
-
-function DashboardPreview() {
-  return (
-    <section className="dashboard-preview" aria-labelledby="dashboard-title">
-      <div className="dashboard-preview__copy"><span className="demo-label">Illustrative inquiry · no live data</span><h2 id="dashboard-title">Know what needs attention next.</h2><p>The authenticated portal will prioritize review queues, stale inventory confirmations, open inquiries, fulfillment milestones, and monthly fee statements without mixing their states.</p></div>
-      <div className="queue-preview"><div><span>Needs confirmation</span><strong>Item order · 6 lines</strong><small>Clear response deadlines</small></div><div><span>Quotation reply</span><strong>Foundation package</strong><small>Version 2 · Buyer changes available</small></div><div><span>Ready for pickup</span><strong>Order details confirmed</strong><small>Pickup authorization required</small></div></div>
-    </section>
-  )
-}
-
-function Reputation() {
-  return (
-    <section className="reputation-section" aria-labelledby="reputation-title">
-      <div><h2 id="reputation-title">A score Buyers can understand</h2><p>Your Vendor Performance Score combines versioned service, quality, and fulfillment signals. New Vendors are labeled clearly until enough eligible evidence exists. Badges such as Fast Responder, Best Price, Most Ordered, and Highly Rated are illustrative and earned only when their approved rules are satisfied.</p></div>
-      <div className="score-diagram" role="img" aria-label="Vendor Performance Score combines compliance, material quality, and order handling signals"><span>VCS<br /><strong>Compliance</strong></span><span>MQS<br /><strong>Material quality</strong></span><span>OHS<br /><strong>Order handling</strong></span><b>VPS</b></div>
-    </section>
-  )
-}
-
-function Faq() {
-  return (
-    <section className="faq-section" id="faq" aria-labelledby="faq-title">
-      <div className="section-heading"><h2 id="faq-title">Questions before you register</h2></div>
-      <div>{questions.map(([question, answer]) => <details key={question}><summary>{question}<ChevronDown aria-hidden="true" /></summary><p>{answer}</p></details>)}</div>
-    </section>
-  )
-}
-
-function FinalCallToAction() {
-  return (
-    <section className="final-cta" aria-labelledby="cta-title">
-      <div><h2 id="cta-title">Ready to build a verified storefront?</h2><p>Start with the Vendor Owner account. Your store stays private until activation requirements are complete.</p></div>
-      <Link className="button button--light" to="/register">Start registration <ArrowRight aria-hidden="true" /></Link>
-    </section>
-  )
+        <div className="lp-hero-visual" aria-label="Illustrative marketplace connection">
+          <div className="lp-store-sign"><img src="/brand/materyalph-mark.png" width="48" height="48" alt="" /><span>From your store<br /><strong>to their next build.</strong></span></div>
+          <div className="lp-materials"><div><Boxes aria-hidden="true" /><span>Materials</span></div><div><Store aria-hidden="true" /><span>Your storefront</span></div><div><Users aria-hidden="true" /><span>Project Buyers</span></div></div>
+          <div className="lp-inquiry"><div className="lp-inquiry-heading"><MessageSquare aria-hidden="true" /><strong>A clearer conversation</strong><span>Example inquiry</span></div><h2>Materials for a two-storey home</h2><p><MapPinned aria-hidden="true" /> Quezon City · Delivery requested</p><dl><div><dt>Cement · 40 kg</dt><dd>180 bags</dd></div><div><dt>Steel bar · 12 mm</dt><dd>96 lengths</dd></div><div><dt>Hollow block · 6 in</dt><dd>1,200 pcs</dd></div></dl><div className="lp-inquiry-bottom"><FileCheck2 aria-hidden="true" /><span>Defined requirements. An informed quotation.</span></div></div>
+        </div>
+      </section>
+      <div className="lp-audience"><div className="lp-container"><p>Built for the Philippine construction community</p><ul><li>Hardware stores</li><li>Material suppliers</li><li>Independent Vendors</li></ul></div></div>
+      <section id="benefits" className="lp-container lp-section" data-reveal aria-labelledby="benefits-title"><div className="lp-heading"><h2 id="benefits-title">Good materials deserve<br />a stronger presence.</h2><p>Make your store easier to discover, your offers easier to understand and your Buyer relationships easier to manage.</p></div><div className="lp-benefits">{benefits.map(({ icon: Icon, title, text }) => <article key={title}><Icon aria-hidden="true" /><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+      <section id="features" className="lp-feature-band" data-reveal aria-labelledby="features-title"><div className="lp-container lp-section"><div className="lp-heading"><h2 id="features-title">From product discovery<br />to a documented order.</h2><p>A preview of the marketplace capabilities planned for eligible, activated stores. Registration is your first step; publication follows review.</p></div><div className="lp-feature-layout"><div className="lp-feature-options" aria-label="Explore marketplace capabilities">{previews.map(({ label, icon: Icon, title }, i) => <button type="button" key={label} aria-pressed={preview === i} aria-controls="landing-feature-preview" onClick={() => setPreview(i)}><Icon aria-hidden="true" /><span><strong>{label}</strong><span>{title}</span></span><ArrowRight aria-hidden="true" /></button>)}</div><div id="landing-feature-preview" className="lp-feature-preview" aria-live="polite"><span className="lp-preview-label">Illustrative {selected.label.toLowerCase()} preview</span><h3>{selected.title}</h3><p>{selected.text}</p><dl>{selected.rows.map(([label, value]) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl></div></div></div></section>
+      <section id="how-it-works" className="lp-container lp-section" data-reveal aria-labelledby="how-title"><div className="lp-heading"><h2 id="how-title">Start with your account.<br />Build toward your storefront.</h2><p>A clear path from registration to eligible marketplace participation, with checks at the stages that matter.</p></div><ol className="lp-steps">{steps.map(([title, description], i) => <li key={title}><span className="lp-step-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><h3>{title}</h3><p>{description}</p></li>)}</ol></section>
+      <section id="verification" className="lp-trust lp-container" data-reveal aria-labelledby="trust-title"><div><ShieldCheck className="lp-trust-icon" aria-hidden="true" /><h2 id="trust-title">Trust starts before<br />your first order.</h2><p>Creating an account is the beginning. Store activation is reviewed before publication, and regulated products need their own applicable compliance checks.</p><a className="lp-text-link" href="#faq">Understand the requirements <ArrowRight aria-hidden="true" /></a></div><ul><li><BadgeCheck aria-hidden="true" /><div><h3>A reviewed store identity</h3><p>Business, ownership and location information support the Vendor review.</p></div></li><li><PackageCheck aria-hidden="true" /><div><h3>Products ready for publication</h3><p>Applicable regulated materials need reviewed PS Mark or ICC evidence. Store approval alone does not publish every product.</p></div></li><li><LockKeyhole aria-hidden="true" /><div><h3>Private documents. Protected access.</h3><p>Required evidence is available to authorized reviewers. Owner accounts use authenticator-based security.</p></div></li></ul></section>
+      <section id="payments-fees" className="lp-container lp-section lp-fees" data-reveal aria-labelledby="fees-title"><div><h2 id="fees-title">Plain-language payments and fees, before you commit</h2><p>The approved Vendor-paid platform commission is <strong>2%</strong>, assessed on the completed-materials basis and billed monthly.</p><p>Vendor discounts are considered. Included material VAT and delivery are excluded from the commission basis.</p><ul className="lp-fee-notes"><li><ReceiptText aria-hidden="true" /><span><strong>Processing is separate.</strong> Third-party processing fees are distinct and vary by payment method and provider.</span></li><li><FileCheck2 aria-hidden="true" /><span><strong>Adjustments stay traceable.</strong> Refunds and dispute adjustments have separate records, with corresponding approved commission adjustments where applicable.</span></li></ul></div><div className="lp-fee-example"><div className="lp-fee-top"><h3>A simple monthly example</h3><span>2% monthly</span></div><p>Illustrative amounts · Material VAT already excluded</p><dl><div><dt>Completed materials before discounts</dt><dd>₱150,000</dd></div><div><dt>Less Vendor discounts</dt><dd>− ₱10,000</dd></div><div className="lp-basis"><dt>Commission basis</dt><dd>₱140,000</dd></div></dl><div className="lp-fee-result"><span>Vendor platform commission<strong>₱2,800</strong></span><span>₱140,000 × 2%</span></div><p>Delivery and processing fees are not part of this example. This is a commission illustration, not a payout statement.</p></div></section>
+      <section id="faq" className="lp-faq-band" data-reveal aria-labelledby="faq-title"><div className="lp-container lp-section lp-faq-layout"><div className="lp-faq-intro"><h2 id="faq-title">A few answers.<br />A clearer next step.</h2><p>What to know about joining, publishing products, connecting with Buyers and protecting your account.</p><Link className="lp-text-link" to="/support">Need more help? <ArrowRight aria-hidden="true" /></Link></div><div className="lp-faq-groups">{questions.map(([group, entries]) => <div key={group}><h3>{group}</h3>{entries.map(([question, answer]) => <details key={question}><summary>{question}<ChevronDown aria-hidden="true" /></summary><p>{answer}</p></details>)}</div>)}</div></div></section>
+      <section className="lp-container lp-section" data-reveal><div className="lp-final"><div><h2>Your next chapter<br />starts with your store.</h2><p>Create your Vendor Owner account and take the first step toward a reviewed digital storefront.</p></div><div><Link className="button button--primary" to="/register">Start registration <ArrowRight aria-hidden="true" /></Link><p>Already have an account? <Link to="/login">Sign in</Link></p></div></div></section>
+    </main>
+    <footer className="lp-footer"><div className="lp-container"><div className="lp-footer-main"><div><Link className="brand-link" to="/"><img src="/brand/materyalph-mark.png" alt="MateryalPH" width="48" height="48" /><span>MaterialPH Vendor</span></Link><p>Materials for every build.<br />Connections that help your store move forward.</p></div><nav aria-label="Explore"><strong>Explore MateryalPH</strong><a href="#benefits">Vendor benefits</a><a href="#how-it-works">How it works</a><a href="#payments-fees">Payments &amp; fees</a></nav><nav aria-label="Vendor resources"><strong>Here to help</strong><a href="#verification">Verification</a><a href="#faq">Common questions</a><Link to="/support">Support</Link></nav></div><div className="lp-footer-bottom"><small>MateryalPH · Built for the Philippine construction community.</small><nav aria-label="Legal"><Link to="/legal/terms-of-service">Terms of Service</Link><Link to="/legal/privacy-notice">Privacy Notice</Link></nav></div></div></footer>
+  </div>
 }
