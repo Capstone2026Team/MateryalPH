@@ -54,7 +54,7 @@ return <AdminAuthShell title="Accept your Admin invitation" description="This on
 function WorkspaceEmpty() {
   const navigate = useNavigate(); const [ready, setReady] = useState(false)
   useEffect(() => { let active = true; void getSession().then(() => { if (active) setReady(true) }).catch(() => navigate('/login', { replace: true })); return () => { active = false } }, [navigate])
-  return <main className="workspace-empty"><img src="/brand/materyalph-logo.png" alt="MateryalPH Admin Portal" /><div><ShieldCheck aria-hidden="true" /><h1>{ready ? 'Admin foundation ready' : 'Checking your session…'}</h1><p>{ready ? 'Your identity is authenticated. Operational review queues are introduced in their approved later phases; no placeholder decisions are available here.' : 'Securely restoring your Admin session.'}</p><Link className="admin-return" to="/login">Return to sign in</Link></div></main>
+  return <main className="workspace-empty"><img src="/brand/materyalph-logo.png" alt="MateryalPH Admin Portal" /><div><ShieldCheck aria-hidden="true" /><h1>{ready ? 'Your Admin workspace' : 'Checking your session…'}</h1><p>{ready ? 'You are securely signed in. Operational review queues are not available in this workspace yet. Access to each future queue will follow your assigned permissions.' : 'Securely restoring your Admin session.'}</p><dl className="foundation-details"><div><dt>Account access</dt><dd>{ready ? 'Signed in' : 'Checking…'}</dd></div><div><dt>Operational queues</dt><dd>Not available yet</dd></div></dl><Link className="admin-return" to="/login">Return to sign in</Link></div></main>
 }
 
 export default App

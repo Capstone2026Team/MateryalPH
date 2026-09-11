@@ -440,6 +440,7 @@ export class AuthenticationApi extends runtime.BaseAPI {
     }
 
     /**
+     * Browser requests accepting text/html receive a safe branded error page on callback failure. JSON requests retain the canonical error envelope. No callback parameters are reflected into the HTML page.
      */
     async completeGoogleOidcRaw(requestParameters: CompleteGoogleOidcRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const requestOptions = await this.completeGoogleOidcRequestOpts(requestParameters);
@@ -449,6 +450,7 @@ export class AuthenticationApi extends runtime.BaseAPI {
     }
 
     /**
+     * Browser requests accepting text/html receive a safe branded error page on callback failure. JSON requests retain the canonical error envelope. No callback parameters are reflected into the HTML page.
      */
     async completeGoogleOidc(requestParameters: CompleteGoogleOidcRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.completeGoogleOidcRaw(requestParameters, initOverrides);

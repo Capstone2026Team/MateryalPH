@@ -14,9 +14,11 @@ use App\Http\AuthCookieFactory;
 use App\Http\AuthTransport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\GoogleMobileExchangeRequest;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
 final class GoogleOidcController extends Controller
@@ -70,12 +72,23 @@ final class GoogleOidcController extends Controller
         AuditRecorder $audit,
         MfaChallengeService $mfa,
     ): Response {
-        $input = $request->validate(['state' => ['required', 'string'], 'code' => ['required', 'string']]);
+        try {
+            $input = $request->validate(['state' => ['required', 'string'], 'code' => ['required', 'string']]);
+        } catch (ValidationException $exception) {
+            if (! $this->wantsBrowserPage($request)) {
+                throw $exception;
+            }
+
+            return $this->browserFailure($request->query('error') === 'access_denied' ? 'CANCELLED' : 'OIDC_STATE_INVALID', 422);
+        }
         $webContext = $oidc->webCallbackContext($input['state']);
         try {
             $result = $oidc->complete($input['state'], $input['code']);
         } catch (AuthenticationException $exception) {
             if ($webContext === null || ! in_array($exception->errorCode, self::WEB_REDIRECT_ERROR_CODES, true)) {
+                if ($this->wantsBrowserPage($request)) {
+                    return $this->browserFailure($exception->errorCode, $exception->httpStatus);
+                }
                 throw $exception;
             }
 
@@ -88,6 +101,12 @@ final class GoogleOidcController extends Controller
                 'status' => 'error',
                 'code' => $exception->errorCode,
             ]));
+        } catch (ConnectionException $exception) {
+            if (! $this->wantsBrowserPage($request)) {
+                throw $exception;
+            }
+
+            return $this->browserFailure('OIDC_KEYS_UNAVAILABLE', 503);
         }
         if ($result->clientKind === 'MOBILE') {
             $exchangeCode = $oidc->issueMobileExchangeCode($result);
@@ -117,6 +136,28 @@ final class GoogleOidcController extends Controller
         return redirect()->away(rtrim($destination, '/').'/auth/callback?status=success')
             ->withCookie($cookies->access($tokens))
             ->withCookie($cookies->refresh($tokens));
+    }
+
+    private function wantsBrowserPage(Request $request): bool
+    {
+        return ! $request->expectsJson() && in_array('text/html', $request->getAcceptableContentTypes(), true);
+    }
+
+    private function browserFailure(string $code, int $status): Response
+    {
+        $message = match ($code) {
+            'CANCELLED' => 'Google sign-in was cancelled. You can start again whenever you are ready.',
+            'PORTAL_ACCESS_DENIED' => 'This Google account belongs to a different MateryalPH account type. Return to your app or portal and choose another Google account.',
+            'ACCOUNT_NOT_FOUND' => 'No account is linked to this Google identity for the selected app or portal. Return to sign in or create an account.',
+            'OIDC_STATE_INVALID' => 'This sign-in request is incomplete or has expired. Return to your app or portal and start again.',
+            'OIDC_KEYS_UNAVAILABLE', 'OIDC_NOT_CONFIGURED' => 'Google sign-in is temporarily unavailable. Try again shortly or sign in with email.',
+            default => 'Google sign-in could not finish. Return to your app or portal to try again or sign in with email.',
+        };
+
+        return response()->view('auth.google-failure', ['message' => $message], $status)
+            ->header('Cache-Control', 'no-store, private')
+            ->header('Referrer-Policy', 'no-referrer')
+            ->header('X-Content-Type-Options', 'nosniff');
     }
 
     public function exchangeMobile(

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+
+import '../widgets/auth_content.dart';
 import 'package:flutter/services.dart';
 import '../auth/auth_repository.dart';
 
@@ -102,7 +104,7 @@ class _RiskOtpScreenState extends State<RiskOtpScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Security check')),
     body: SafeArea(
-      child: SingleChildScrollView(
+      child: AuthContent(
         padding: const EdgeInsets.all(24),
         child: Center(
           child: ConstrainedBox(

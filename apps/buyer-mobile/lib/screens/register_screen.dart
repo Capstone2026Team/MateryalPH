@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/auth_content.dart';
+import '../widgets/phone_number_field.dart';
+
 import '../auth/auth_repository.dart';
 import '../design_system/theme.dart';
 import 'risk_otp_screen.dart';
@@ -28,7 +31,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _email = TextEditingController();
-  final _mobile = TextEditingController(text: '+63');
+  String _mobile = '';
   final _company = TextEditingController();
   final _password = TextEditingController();
   String _buyerType = 'INDIVIDUAL';
@@ -42,7 +45,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _name.dispose();
     _email.dispose();
-    _mobile.dispose();
     _company.dispose();
     _password.dispose();
     super.dispose();
@@ -65,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       await widget.authRepository.register(
         fullName: _name.text,
         email: _email.text,
-        mobileE164: _mobile.text,
+        mobileE164: _mobile,
         password: _password.text,
         buyerType: _buyerType,
         companyName: _buyerType == 'BUSINESS' ? _company.text : null,
@@ -103,7 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: AuthContent(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
           child: Form(
             key: _formKey,
@@ -119,7 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'Your email must be verified before you can sign in.',
+                    'Create your account, then verify your email. It only takes a few steps.',
                     style: TextStyle(color: BuyerTheme.muted),
                   ),
                   const SizedBox(height: 24),
@@ -136,9 +138,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Row(
                       children: [
                         Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: Text('or use email'),
+                        Flexible(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'or use email',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
                         ),
                         Expanded(child: Divider()),
                       ],
@@ -168,25 +175,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _mobile,
-                    autofillHints: const [AutofillHints.telephoneNumber],
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                      labelText: 'Mobile number',
-                      helperText:
-                          'Use international format, for example +639171234567.',
-                    ),
-                    validator: (value) =>
-                        RegExp(
-                          r'^\+[1-9]\d{7,14}$',
-                        ).hasMatch(value?.trim() ?? '')
-                        ? null
-                        : 'Enter a valid international mobile number.',
+                  PhoneNumberField(
+                    enabled: !_submitting,
+                    onChanged: (value) => _mobile = value,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
+                    isExpanded: true,
                     initialValue: _buyerType,
                     decoration: const InputDecoration(labelText: 'Buyer type'),
                     items: const [
@@ -267,15 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   if (_error != null) ...[
                     const SizedBox(height: 8),
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(
-                        _error!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    ),
+                    AuthNotice(message: _error!, isError: true),
                   ],
                   const SizedBox(height: 20),
                   FilledButton(

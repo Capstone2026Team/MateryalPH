@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('Vendor landing remains usable, truthful, and responsive', async ({ page }) => {
   await page.goto('/')
 
-  await expect(page.getByRole('heading', { name: 'Turn project demand into dependable store growth.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Build your store’s next chapter.' })).toBeVisible()
 
   const skipLink = page.getByRole('link', { name: 'Skip to content' })
   await page.keyboard.press('Tab')
@@ -44,8 +44,8 @@ test('Vendor landing remains usable, truthful, and responsive', async ({ page })
   const fees = page.locator('#payments-fees')
   await expect(fees.getByRole('heading', { name: 'Plain-language payments and fees, before you commit' })).toBeVisible()
   await expect(fees.getByText(/approved Vendor-paid platform commission is/)).toContainText('2%')
-  await expect(fees.getByText(/Third-party processing fees are distinct/)).toContainText('not assigned an invented percentage')
-  await expect(fees.getByText('TEST/DEMO only')).toBeVisible()
+  await expect(fees.getByText(/Third-party processing fees are distinct/)).toContainText('vary by payment method')
+  await expect(page.getByText(/TEST\/DEMO|capstone environment|escrow|payment-account onboarding/i)).toHaveCount(0)
 
   const faq = page.locator('details').filter({ hasText: 'When is the 2% commission charged?' })
   await faq.getByText('When is the 2% commission charged?', { exact: true }).click()

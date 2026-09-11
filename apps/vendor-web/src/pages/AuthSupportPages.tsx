@@ -1,4 +1,4 @@
-import { Button, Field, StatusMessage } from '@materyalph/web-ui'
+import { Button, Field, PhoneField, StatusMessage } from '@materyalph/web-ui'
 import { Copy, Download, LogOut, ShieldCheck } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { type FormEvent, useEffect, useRef, useState } from 'react'
@@ -20,6 +20,7 @@ import {
   resetPassword,
   signOut,
   startGoogleRegistration,
+  startGoogleSignIn,
   startMfaEnrollment,
   verifyVendorEmail,
   type RiskChallenge,
@@ -96,6 +97,7 @@ export function VendorMfaPage() {
   }
 
   if (recoveryCodes) return <VendorAuthShell title="Save your recovery codes" description="Each code works once. Store this replacement set offline; MateryalPH will not show it again.">
+    <StatusMessage>Keep these codes somewhere only you can access. They can unlock your account if you lose your authenticator.</StatusMessage>
     <div className="recovery-codes" aria-label="One-time recovery codes">{recoveryCodes.map((code) => <code key={code}>{code}</code>)}</div>
     <div className="recovery-actions">
       <Button variant="secondary" onClick={() => void copyToClipboard(recoveryCodes.join('\n'), 'Recovery codes copied.')}><Copy aria-hidden="true" /> Copy all codes</Button>
@@ -118,7 +120,7 @@ export function VendorMfaPage() {
   return <VendorAuthShell title={mode === 'enrollment' ? 'Scan with your authenticator app' : 'Verify it is you'} description={mode === 'enrollment' ? 'Scan the code, then enter the current six-digit code from your authenticator app.' : 'Enter the current code from your authenticator app.'}>
     <form className="auth-form" onSubmit={submit}>
       {mode === 'enrollment' && enrollment && <div className="totp-setup">
-        <div className="totp-qr"><QRCodeSVG value={enrollment.provisioningUri} size={208} level="M" marginSize={4} title="Authenticator setup QR code" role="img" /></div>
+        <ol className="auth-steps"><li>Open your authenticator and choose to add an account.</li><li>Scan this QR code or enter the manual key below.</li><li>Enter the current six-digit code to finish setup.</li></ol><div className="totp-qr"><QRCodeSVG value={enrollment.provisioningUri} size={208} level="M" marginSize={4} title="Authenticator setup QR code" role="img" /></div>
         <div className="manual-setup"><h3>Can't scan the QR code?</h3><p>Enter this setup key manually.</p><div><code>{enrollment.secret}</code><Button variant="secondary" aria-label="Copy manual setup key" onClick={() => void copyToClipboard(enrollment.secret, 'Setup key copied.')}><Copy aria-hidden="true" /> Copy</Button></div></div>
         {copyFeedback && <StatusMessage>{copyFeedback}</StatusMessage>}
       </div>}
@@ -191,7 +193,7 @@ export function VendorForgotPasswordPage() {
 export function VendorResetPasswordPage() {
   const navigate = useNavigate(); const [searchParams] = useSearchParams(); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null)
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setMessage(null); const data = new FormData(event.currentTarget); try { await resetPassword(String(data.get('email')), String(data.get('code')), String(data.get('password')), String(data.get('password_confirmation'))); navigate('/login?reset=success', { replace: true }) } catch (error) { setMessage(await readableApiError(error)) } finally { setBusy(false) } }
-  return <VendorAuthShell title="Set a new password" description="The recovery code expires after ten minutes and cannot be reused."><form className="auth-form" onSubmit={submit}>{message && <StatusMessage tone="error">{message}</StatusMessage>}<Field label="Email address" name="email" type="email" defaultValue={searchParams.get('email') ?? ''} autoComplete="email" required /><Field label="Six-digit recovery code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /><Field label="New password" name="password" type="password" autoComplete="new-password" minLength={12} required /><Field label="Confirm new password" name="password_confirmation" type="password" autoComplete="new-password" minLength={12} required /><Button className="w-full" type="submit" disabled={busy}>{busy ? 'Updating…' : 'Update password'}</Button></form></VendorAuthShell>
+  return <VendorAuthShell title="Set a new password" description="The recovery code expires after ten minutes and cannot be reused."><form className="auth-form" onSubmit={submit}>{message && <StatusMessage tone="error">{message}</StatusMessage>}<Field label="Email address" name="email" type="email" defaultValue={searchParams.get('email') ?? ''} autoComplete="email" required /><Field label="Six-digit recovery code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /><Field label="New password" name="password" type="password" autoComplete="new-password" minLength={12} hint="At least 12 characters with uppercase, lowercase, and a number." required /><Field label="Confirm new password" name="password_confirmation" type="password" autoComplete="new-password" minLength={12} required /><Button className="w-full" type="submit" disabled={busy}>{busy ? 'Updating…' : 'Update password'}</Button></form></VendorAuthShell>
 }
 
 export function VendorVerifyEmailPage() {
@@ -204,7 +206,7 @@ export function VendorVerifyEmailPage() {
 export function VendorGoogleRegisterPage() {
   const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null)
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); setBusy(true); setMessage(null); const data = new FormData(event.currentTarget); try { await startGoogleRegistration({ mobileE164: String(data.get('mobile')), businessName: String(data.get('business_name')) }) } catch (error) { setMessage(await readableApiError(error)); setBusy(false) } }
-  return <VendorAuthShell title="Register with Google" description="Provide the Vendor details Google does not supply before continuing to its secure consent screen."><form className="auth-form" onSubmit={submit}>{message && <StatusMessage tone="error">{message}</StatusMessage>}<Field label="Business or store name" name="business_name" autoComplete="organization" maxLength={180} required /><Field label="Mobile number" name="mobile" type="tel" autoComplete="tel" placeholder="+639171234567" pattern="\+[1-9][0-9]{7,14}" required /><label className="consent"><input type="checkbox" required /><span>I accept the versioned <Link to="/legal/terms-of-service">Terms of Service</Link>.</span></label><label className="consent"><input type="checkbox" required /><span>I acknowledge the separate <Link to="/legal/privacy-notice">Privacy Notice</Link>.</span></label><Button className="w-full" type="submit" disabled={busy}>{busy ? 'Opening Google…' : 'Continue with Google'}</Button></form></VendorAuthShell>
+  return <VendorAuthShell title="Register with Google" description="Provide the Vendor details Google does not supply before continuing to its secure consent screen."><form className="auth-form" onSubmit={submit}>{message && <StatusMessage tone="error">{message}</StatusMessage>}<Field label="Business or store name" name="business_name" autoComplete="organization" maxLength={180} required /><PhoneField label="Mobile number" name="mobile" required /><label className="consent"><input type="checkbox" required /><span>I accept the versioned <Link to="/legal/terms-of-service">Terms of Service</Link>.</span></label><label className="consent"><input type="checkbox" required /><span>I acknowledge the separate <Link to="/legal/privacy-notice">Privacy Notice</Link>.</span></label><Button className="w-full" type="submit" disabled={busy}>{busy ? 'Opening Google…' : 'Continue with Google'}</Button></form></VendorAuthShell>
 }
 
 export function VendorDashboardFoundation() {
@@ -228,7 +230,7 @@ export function VendorDashboardFoundation() {
     try {
       await signOut()
       setReady(false)
-      navigate('/login', { replace: true })
+      navigate('/login?logout=success', { replace: true })
     } catch (error) {
       setLogoutError(await readableApiError(error))
       setLogoutBusy(false)
@@ -240,14 +242,21 @@ export function VendorDashboardFoundation() {
       <img src="/brand/materyalph-logo.png" alt="MateryalPH Vendor Portal" />
       {ready && <Button variant="secondary" disabled={logoutBusy} onClick={() => void logout()}><LogOut aria-hidden="true" />{logoutBusy ? 'Signing out…' : 'Sign out'}</Button>}
     </header>
-    <div><ShieldCheck aria-hidden="true" /><h1>{ready ? 'Vendor foundation ready' : message ? 'Session could not be restored' : 'Checking your session…'}</h1><p>{ready ? 'Authentication is complete. Store verification and operational workspace features continue in their approved later phases.' : message ? 'Your authenticated Vendor session could not be confirmed.' : 'Securely restoring your Vendor session.'}</p>{logoutError && <StatusMessage tone="error">{logoutError}</StatusMessage>}{message && <><StatusMessage tone="error">{message}</StatusMessage><Link className="button button--primary" to="/login">Return to sign in</Link></>}</div>
+    <div><ShieldCheck aria-hidden="true" /><h1>{ready ? 'Welcome to your Vendor account' : message ? 'Session could not be restored' : 'Checking your session…'}</h1><p>{ready ? 'You are securely signed in. Your account is ready; store verification and activation are separate steps and are not available in this workspace yet.' : message ? 'Your authenticated Vendor session could not be confirmed.' : 'Securely restoring your Vendor session.'}</p>{ready && <dl className="foundation-details"><div><dt>Account access</dt><dd>Signed in</dd></div><div><dt>Store verification</dt><dd>Not available here yet</dd></div></dl>}{logoutError && <StatusMessage tone="error">{logoutError}</StatusMessage>}{message && <><StatusMessage tone="error">{message}</StatusMessage><Link className="button button--primary" to="/login">Return to sign in</Link></>}</div>
   </main>
 }
 
 export function VendorAuthCallbackPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const callbackFailed = searchParams.get('status') === 'error'
+  const [retryBusy, setRetryBusy] = useState(false)
+  const [retryError, setRetryError] = useState<string | null>(null)
+  async function retryGoogle() {
+    setRetryBusy(true); setRetryError(null)
+    try { await startGoogleSignIn() }
+    catch (error) { setRetryError(await readableApiError(error)); setRetryBusy(false) }
+  }
+  const callbackFailed = searchParams.get('status') !== 'success'
   const errorMessage = callbackFailed
     ? googleCallbackErrorMessage(searchParams.get('code'))
     : null
@@ -257,7 +266,7 @@ export function VendorAuthCallbackPage() {
   }, [callbackFailed, navigate])
 
   if (errorMessage) {
-    return <VendorAuthShell title="Google sign-in could not continue" description="Your existing MateryalPH identity is still protected."><StatusMessage tone="error">{errorMessage}</StatusMessage><Link className="button button--primary w-full" to="/login">Back to Vendor sign in</Link></VendorAuthShell>
+    return <VendorAuthShell title="Google sign-in could not continue" description="Your existing MateryalPH identity is still protected."><StatusMessage tone="error">{errorMessage}</StatusMessage><div className="callback-actions"><Link className="button button--primary w-full" to="/login">Back to Vendor sign in</Link><Button variant="secondary" disabled={retryBusy} onClick={() => void retryGoogle()}>{retryBusy ? 'Opening Google…' : 'Use a different Google account'}</Button><Link className="auth-cancel" to="/register">Register a Vendor account</Link></div>{retryError && <StatusMessage tone="error">{retryError}</StatusMessage>}</VendorAuthShell>
   }
 
   return <VendorAuthShell title="Completing sign in" description="MateryalPH is validating your secure session."><StatusMessage>Finishing Google sign-in…</StatusMessage></VendorAuthShell>
@@ -267,6 +276,12 @@ function googleCallbackErrorMessage(code: string | null): string {
   const messages: Record<string, string> = {
     PORTAL_ACCESS_DENIED: 'This Google account belongs to a different MateryalPH account type and cannot sign in to the Vendor portal.',
     ACCOUNT_NOT_FOUND: 'No MateryalPH Vendor account is linked to this Google account.',
+    OIDC_STATE_INVALID: 'This sign-in request has expired. Start again to securely continue with Google.',
+    OIDC_EXCHANGE_FAILED: 'Google sign-in could not finish. Try again or sign in with your email.',
+    OIDC_TOKEN_INVALID: 'We could not verify this Google sign-in. Please start again.',
+    OIDC_KEYS_UNAVAILABLE: 'Google sign-in is temporarily unavailable. Try again shortly or use email sign-in.',
+    OIDC_NOT_CONFIGURED: 'Google sign-in is currently unavailable. You can continue with email instead.',
+    access_denied: 'Google sign-in was cancelled. You can try again whenever you are ready.',
     CONSENT_REQUIRED: 'Accept the Terms of Service and Privacy Notice before creating a Vendor account with Google.',
   }
 

@@ -33,7 +33,41 @@ abstract final class BuyerTheme {
     );
 
     return base.copyWith(
-      textTheme: base.textTheme.apply(bodyColor: ink, displayColor: ink),
+      textTheme: base.textTheme
+          .apply(bodyColor: ink, displayColor: ink)
+          .copyWith(
+            bodyLarge: base.textTheme.bodyLarge?.copyWith(
+              color: ink,
+              height: 1.5,
+            ),
+            bodyMedium: base.textTheme.bodyMedium?.copyWith(
+              color: ink,
+              height: 1.5,
+            ),
+            titleLarge: base.textTheme.titleLarge?.copyWith(
+              color: ink,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: const Size(48, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(minimumSize: const Size(48, 48)),
+      ),
+      dividerTheme: const DividerThemeData(
+        color: border,
+        thickness: 1,
+        space: 32,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: ink,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.transparent,
         foregroundColor: ink,
@@ -47,7 +81,7 @@ abstract final class BuyerTheme {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
           textStyle: const WidgetStatePropertyAll(
-            TextStyle(fontWeight: FontWeight.w700),
+            TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700),
           ),
         ),
       ),
@@ -61,11 +95,21 @@ abstract final class BuyerTheme {
             BorderSide(color: Color(MateryalColorTokens.borderDefault)),
           ),
           textStyle: const WidgetStatePropertyAll(
-            TextStyle(fontWeight: FontWeight.w700),
+            TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700),
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
+        errorMaxLines: 4,
+        helperMaxLines: 4,
+        floatingLabelStyle: const TextStyle(
+          color: ink,
+          fontWeight: FontWeight.w600,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: action, width: 2),
+        ),
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(

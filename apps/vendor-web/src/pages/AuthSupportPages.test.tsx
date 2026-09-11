@@ -162,7 +162,7 @@ describe('Vendor MFA flow', () => {
 
     await act(async () => completeLogout())
     expect(await screen.findByRole('heading', { name: 'Login page' })).toBeVisible()
-    expect(screen.queryByRole('heading', { name: 'Vendor foundation ready' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Welcome to your Vendor account' })).not.toBeInTheDocument()
   })
 
   test('keeps the authenticated dashboard visible and surfaces a safe logout failure', async () => {
@@ -172,7 +172,7 @@ describe('Vendor MFA flow', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: 'Sign out' }))
     expect(await screen.findByText('Sign out could not be completed. Try again.')).toHaveAttribute('role', 'alert')
-    expect(screen.getByRole('heading', { name: 'Vendor foundation ready' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Welcome to your Vendor account' })).toBeVisible()
     expect(screen.getByRole('button', { name: 'Sign out' })).toBeEnabled()
     expect(screen.queryByRole('heading', { name: 'Login page' })).not.toBeInTheDocument()
   })

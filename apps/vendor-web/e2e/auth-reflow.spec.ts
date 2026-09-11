@@ -15,7 +15,12 @@ for (const surface of surfaces) {
       await page.emulateMedia({ reducedMotion: 'reduce' })
       await page.goto(`${surface.base}${route}`)
       await expect(page.locator('main')).toBeVisible()
-      await expect(page.locator('h2')).toBeVisible()
+      await expect(page.locator('h1')).toBeVisible()
+      const field = page.locator('input:not([type="checkbox"])').first()
+      if (await field.count()) {
+        expect((await field.boundingBox())?.height).toBeGreaterThanOrEqual(44)
+        expect(await field.evaluate((element) => getComputedStyle(element).borderStyle)).not.toBe('none')
+      }
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
       expect(overflow).toBeLessThanOrEqual(1)
       await page.keyboard.press('Tab')

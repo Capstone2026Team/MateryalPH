@@ -28,10 +28,10 @@ describe('Vendor public portal', () => {
   test('renders the approved opportunity, verification, and fee disclosures', () => {
     render(<App />)
 
-    expect(screen.getByRole('heading', { name: 'Turn project demand into dependable store growth.' })).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Build your store’s next chapter.' })).toBeVisible()
     expect(screen.getByText(/Tier 1 supplier is a directory presence only/i)).toBeVisible()
     expect(screen.getByText('2% monthly')).toBeVisible()
-    expect(screen.getByText(/TEST\/DEMO only/i)).toBeVisible()
+    expect(screen.queryByText(/TEST\/DEMO only/i)).not.toBeInTheDocument()
     expect(screen.getAllByRole('link', { name: /register your store/i }).at(0)).toHaveAttribute('href', '/register')
     expect(screen.getByRole('link', { name: 'Sign in' })).toHaveAttribute('href', '/login')
   })
@@ -70,6 +70,27 @@ describe('Vendor public portal', () => {
     expect(screen.getByText(/belongs to a different MateryalPH account type/i)).toBeVisible()
     expect(screen.getByRole('link', { name: 'Back to Vendor sign in' })).toHaveAttribute('href', '/login')
     expect(screen.queryByText('PORTAL_ACCESS_DENIED')).not.toBeInTheDocument()
+  })
+
+  test('password visibility does not clear the entered password', () => {
+    window.history.replaceState({}, '', '/login')
+    render(<App />)
+    const password = screen.getByLabelText(/^Password/i, { selector: 'input' })
+    fireEvent.change(password, { target: { value: 'ExamplePassword123' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Show password' }))
+    expect(password).toHaveAttribute('type', 'text')
+    expect(password).toHaveValue('ExamplePassword123')
+    fireEvent.click(screen.getByRole('button', { name: 'Hide password' }))
+    expect(password).toHaveAttribute('type', 'password')
+  })
+
+  test.each(['ACCOUNT_NOT_FOUND', 'OIDC_STATE_INVALID', 'OIDC_KEYS_UNAVAILABLE', 'access_denied', 'unknown-internal-detail'])('Google callback %s offers safe recovery actions', (code) => {
+    window.history.replaceState({}, '', `/auth/callback?status=error&code=${code}`)
+    render(<App />)
+    expect(screen.getByRole('link', { name: 'Back to Vendor sign in' })).toHaveAttribute('href', '/login')
+    expect(screen.getByRole('link', { name: 'Register a Vendor account' })).toHaveAttribute('href', '/register')
+    expect(screen.getByRole('button', { name: 'Use a different Google account' })).toBeEnabled()
+    expect(screen.queryByText(code, { exact: true })).not.toBeInTheDocument()
   })
 
   test.each([
@@ -132,7 +153,7 @@ describe('Vendor public portal', () => {
       [/^Password/i, 'Use uppercase, lowercase, and a number.'],
       [/Confirm password/i, 'The password confirmation does not match.'],
     ] as const) {
-      expect(screen.getByLabelText(label)).toHaveAttribute('aria-invalid', 'true')
+      expect(screen.getByLabelText(label, { selector: 'input' })).toHaveAttribute('aria-invalid', 'true')
       expect(screen.getByText(message)).toHaveAttribute('role', 'alert')
     }
 
@@ -200,9 +221,9 @@ async function completeRegistrationForm(renderWidget: ReturnType<typeof installR
   fireEvent.change(screen.getByLabelText(/Owner full name/i), { target: { value: 'Vendor Owner' } })
   fireEvent.change(screen.getByLabelText(/Business or store name/i), { target: { value: 'Sample Supply' } })
   fireEvent.change(screen.getByLabelText(/Email address/i), { target: { value: 'vendor@example.test' } })
-  fireEvent.change(screen.getByLabelText(/Mobile number/i), { target: { value: '+639171234567' } })
+  fireEvent.change(screen.getByLabelText(/Mobile number/i, { selector: 'input' }), { target: { value: '+639171234567' } })
   fireEvent.change(screen.getByLabelText(/^Password/i), { target: { value: 'SecurePassword1' } })
-  fireEvent.change(screen.getByLabelText(/Confirm password/i), { target: { value: 'SecurePassword1' } })
+  fireEvent.change(screen.getByLabelText(/^Confirm password/i, { selector: 'input' }), { target: { value: 'SecurePassword1' } })
   fireEvent.click(screen.getByLabelText(/I accept the versioned/i))
   fireEvent.click(screen.getByLabelText(/I acknowledge the separate/i))
 }

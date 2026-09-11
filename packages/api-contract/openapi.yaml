@@ -259,6 +259,7 @@ paths:
     get:
       operationId: completeGoogleOidc
       tags: [Authentication]
+      description: Browser requests accepting text/html receive a safe branded error page on callback failure. JSON requests retain the canonical error envelope. No callback parameters are reflected into the HTML page.
       parameters:
         - in: query
           name: state
@@ -270,7 +271,11 @@ paths:
           schema: { type: string }
       responses:
         "302": { description: "Validated OIDC redirect to a web portal with HttpOnly cookies, to the Buyer app with a two-minute one-time exchange code, or to an allowlisted web portal callback with a stable error code for an expected identity/access denial." }
-        "401": { $ref: "#/components/responses/ErrorResponse" }
+        "401": { $ref: "#/components/responses/GoogleCallbackErrorResponse" }
+        "403": { $ref: "#/components/responses/GoogleCallbackErrorResponse" }
+        "404": { $ref: "#/components/responses/GoogleCallbackErrorResponse" }
+        "422": { $ref: "#/components/responses/GoogleCallbackErrorResponse" }
+        "503": { $ref: "#/components/responses/GoogleCallbackErrorResponse" }
   /mobile/auth/register:
     post:
       operationId: registerBuyerMobile
@@ -562,6 +567,14 @@ components:
     botProofCookie: { type: apiKey, in: cookie, name: mp_bot_proof }
     webCsrf: { type: apiKey, in: header, name: X-CSRF-Token }
   responses:
+    GoogleCallbackErrorResponse:
+      description: Safe callback failure; HTML for browser navigation and the canonical error envelope for JSON clients.
+      content:
+        text/html:
+          schema: { type: string }
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+
     ErrorResponse:
       description: Safe structured error with X-Correlation-ID response header.
       content:

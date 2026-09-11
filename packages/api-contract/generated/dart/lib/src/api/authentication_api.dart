@@ -148,7 +148,7 @@ class AuthenticationApi {
   }
 
   /// completeGoogleOidc
-  /// 
+  /// Browser requests accepting text/html receive a safe branded error page on callback failure. JSON requests retain the canonical error envelope. No callback parameters are reflected into the HTML page.
   ///
   /// Parameters:
   /// * [state] 

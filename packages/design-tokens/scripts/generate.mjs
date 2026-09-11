@@ -41,6 +41,7 @@ const dart = `// @generated from tokens.json — do not edit directly.\nabstract
 
 const outputs = [
   [resolve(packageRoot, 'web.css'), webCss],
+  [resolve(repositoryRoot, 'services/api/public/auth/tokens.css'), `${generatedHeader}\n:root {\n${rootVariables.join('\n')}\n}\n`],
   [resolve(repositoryRoot, 'apps/buyer-mobile/lib/design_system/generated/color_tokens.dart'), dart],
 ]
 

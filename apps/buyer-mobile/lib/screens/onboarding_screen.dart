@@ -17,7 +17,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       image: 'assets/onboarding/source-smart.png',
       title: 'Source Smart, Build Fast',
       body:
-          'Connect directly with hardware suppliers near your project site. No middlemen, no delays.',
+          'Discover hardware suppliers near your project site and explore your options for the next build.',
     ),
     (
       image: 'assets/onboarding/find-suppliers.png',

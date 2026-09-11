@@ -64,10 +64,10 @@ const onboardingSteps = [
 const questions = [
   ['Who can register as a Vendor?', 'Eligible independent hardware stores and construction-material suppliers may create an Owner account, subject to the approved identity, business, location, and verification requirements.'],
   ['What does Vendor verification provide?', 'An approved Vendor can become a Tier 2 authenticated storefront. Verification is reviewed and does not guarantee sales, ranking, or Buyer selection.'],
-  ['Does MateryalPH hold money in escrow?', 'No. MateryalPH is not a wallet or escrow service. Digital payments use the configured provider in TEST mode for the capstone; physical payments are recorded separately.'],
+  ['What should I prepare before registering?', 'Have your Owner contact details and business name ready. Verify your email and set up an authenticator to protect access to your account.'],
   ['When is the 2% commission charged?', 'It is assessed on the approved completed-materials basis and included in monthly Vendor billing. It is separate from Buyer payment-processing fees and configurable withholding scenarios.'],
   ['Are processing fees included in the 2%?', 'No. Third-party payment-processing fees are separate and depend on the configured provider and payment method. MateryalPH does not invent a universal processing rate.'],
-  ['Is payment-account onboarding required?', 'It applies before supported online marketplace payments when that capability is enabled for the deployment. Phase 1 does not enable live commerce.'],
+  ['Does registration activate my store immediately?', 'No. Creating an account is the first step. Store verification and activation requirements must be completed before your store is published.'],
   ['Can every product be published immediately?', 'No. Regulated categories require the applicable evidence and an approved compliance decision before publication.'],
   ['How do Buyers contact my store?', 'Eligible Buyers can message within listing, order, or Work Package context and may send a direct Work Package inquiry. There is no public reverse-auction queue.'],
   ['Can I send quotations?', 'Eligible Vendors can respond to direct project inquiries using immutable quotation versions. Editing a published quotation creates a new version.'],
@@ -101,8 +101,8 @@ function Hero() {
   return (
     <section className="hero">
       <div className="hero__copy">
-        <h1>Turn project demand into dependable store growth.</h1>
-        <p>MateryalPH connects eligible Philippine hardware suppliers with Buyers sourcing materials for item purchases and construction Work Packages.</p>
+        <h1>Build your store’s next chapter.</h1>
+        <p>A marketplace for Philippine hardware stores and material suppliers. Start your Owner account and prepare to connect with Buyers building their next project.</p>
         <div className="hero__actions">
           <Link className="button button--primary" to="/register">Register your store <ArrowRight aria-hidden="true" /></Link>
           <a className="button button--secondary" href="#how-it-works">See how it works</a>
@@ -114,7 +114,7 @@ function Hero() {
         </ul>
       </div>
       <div className="opportunity-sheet" aria-label="Illustrative project inquiry preview">
-        <div className="opportunity-sheet__topline"><span>Illustrative demo</span><strong>New inquiry</strong></div>
+        <div className="opportunity-sheet__topline"><span>Illustrative inquiry</span><strong>New inquiry</strong></div>
         <h2>Two-storey residence · Structural materials</h2>
         <p className="opportunity-sheet__location"><MapPinned aria-hidden="true" /> Quezon City · Delivery requested</p>
         <div className="material-line"><span>Portland cement · 40 kg</span><strong>180 bags</strong></div>
@@ -157,7 +157,7 @@ function Verification() {
 function Features() {
   return (
     <section className="feature-section" id="features" aria-labelledby="feature-title">
-      <div className="section-heading"><h2 id="feature-title">One operating view from listing to fulfillment</h2><p>Storefront, team access, catalog, inventory, messaging, quotations, orders, and compliance remain connected without collapsing their distinct states.</p></div>
+      <div className="section-heading"><h2 id="feature-title">Designed around your store’s workflow</h2><p>Explore the marketplace experience planned for eligible, activated stores. Account registration is the first step; verification comes before publication.</p></div>
       <div className="feature-grid">{features.map(({ title, text, icon: Icon }) => <article key={title}><Icon aria-hidden="true" /><h3>{title}</h3><p>{text}</p></article>)}</div>
     </section>
   )
@@ -179,7 +179,7 @@ function Compliance() {
       <div>
         <h2 id="compliance-title">Regulated materials need evidence before publication.</h2>
         <p>Applicable DTI-BPS regulated materials require reviewed PS Mark or ICC evidence. Photo/OCR-assisted entry, QR input, or manual entry may help submit details, but MateryalPH does not issue marks, stickers, government certificates, or regulatory approval.</p>
-        <p>Documents remain private, access-controlled, malware-scanned, and served through short-lived authorized links.</p>
+        <p>Business evidence is handled privately and made available only to authorized reviewers.</p>
       </div>
       <Link className="button button--secondary" to="/verification">What you may need</Link>
     </section>
@@ -203,16 +203,15 @@ function Fees() {
     <section className="fees-section" id="payments-fees" aria-labelledby="fees-title">
       <div>
         <h2 id="fees-title">Plain-language payments and fees, before you commit</h2>
-        <p>Supported online marketplace payments use the approved Xendit architecture when the deployment enables commerce and the Vendor has completed required payment-account onboarding. MateryalPH is a marketplace, not a bank, card processor, e-wallet processor, or the seller.</p>
+        <p>Understand the costs associated with your store. Vendor commission and payment-processing fees are separate charges, with a clear basis for each.</p>
         <p>The approved Vendor-paid platform commission is <strong>2%</strong> of the completed-materials basis after Vendor discounts and excluding included Vendor VAT. It becomes a separate Vendor liability billed on the approved monthly cycle.</p>
-        <p>Third-party processing fees are distinct, may vary by configured provider and method, and are not assigned an invented percentage here. Tax and withholding treatment depends on the approved configuration and prevailing rules; there is no BIR API integration.</p>
+        <p>Third-party processing fees are distinct and vary by payment method and provider. Review the applicable fee breakdown and tax treatment before proceeding.</p>
         <Link className="text-link" to="/fees">Read the payment and fee breakdown <ArrowRight aria-hidden="true" /></Link>
       </div>
       <dl>
         <div><dt>Vendor commission</dt><dd>2% monthly</dd></div>
         <div><dt>Provider processing fees</dt><dd>Separate, method-dependent</dd></div>
-        <div><dt>Tax / withholding</dt><dd>Configuration-controlled</dd></div>
-        <div><dt>Phase 1 commerce</dt><dd>TEST/DEMO only</dd></div>
+        <div><dt>Billing clarity</dt><dd>Commission shown separately</dd></div>
       </dl>
     </section>
   )
@@ -221,8 +220,8 @@ function Fees() {
 function DashboardPreview() {
   return (
     <section className="dashboard-preview" aria-labelledby="dashboard-title">
-      <div className="dashboard-preview__copy"><span className="demo-label">Illustrative demo · no live data</span><h2 id="dashboard-title">Know what needs attention next.</h2><p>The authenticated portal will prioritize review queues, stale inventory confirmations, open inquiries, fulfillment milestones, and monthly fee statements without mixing their states.</p></div>
-      <div className="queue-preview"><div><span>Needs confirmation</span><strong>Item order · 6 lines</strong><small>Exact deadline will show in Asia/Manila</small></div><div><span>Quotation reply</span><strong>Foundation package</strong><small>Version 2 · Buyer changes available</small></div><div><span>Ready for pickup</span><strong>Order snapshot locked</strong><small>Pickup authorization required</small></div></div>
+      <div className="dashboard-preview__copy"><span className="demo-label">Illustrative inquiry · no live data</span><h2 id="dashboard-title">Know what needs attention next.</h2><p>The authenticated portal will prioritize review queues, stale inventory confirmations, open inquiries, fulfillment milestones, and monthly fee statements without mixing their states.</p></div>
+      <div className="queue-preview"><div><span>Needs confirmation</span><strong>Item order · 6 lines</strong><small>Clear response deadlines</small></div><div><span>Quotation reply</span><strong>Foundation package</strong><small>Version 2 · Buyer changes available</small></div><div><span>Ready for pickup</span><strong>Order details confirmed</strong><small>Pickup authorization required</small></div></div>
     </section>
   )
 }

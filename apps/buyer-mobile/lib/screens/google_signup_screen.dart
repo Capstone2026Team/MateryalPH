@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/auth_content.dart';
+import '../widgets/phone_number_field.dart';
+
 import '../design_system/theme.dart';
 
 class GoogleSignupScreen extends StatefulWidget {
@@ -23,7 +26,7 @@ class GoogleSignupScreen extends StatefulWidget {
 
 class _GoogleSignupScreenState extends State<GoogleSignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _mobile = TextEditingController(text: '+63');
+  String _mobile = '';
   final _company = TextEditingController();
   String _buyerType = 'INDIVIDUAL';
   bool _acceptedTerms = false;
@@ -33,7 +36,6 @@ class _GoogleSignupScreenState extends State<GoogleSignupScreen> {
 
   @override
   void dispose() {
-    _mobile.dispose();
     _company.dispose();
     super.dispose();
   }
@@ -51,7 +53,7 @@ class _GoogleSignupScreenState extends State<GoogleSignupScreen> {
       _error = null;
     });
     await widget.onStart(
-      mobileE164: _mobile.text,
+      mobileE164: _mobile,
       buyerType: _buyerType,
       companyName: _buyerType == 'BUSINESS' ? _company.text : null,
     );
@@ -71,7 +73,7 @@ class _GoogleSignupScreenState extends State<GoogleSignupScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: AuthContent(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Form(
             key: _formKey,
@@ -90,22 +92,13 @@ class _GoogleSignupScreenState extends State<GoogleSignupScreen> {
                   style: TextStyle(color: BuyerTheme.muted, height: 1.5),
                 ),
                 const SizedBox(height: 24),
-                TextFormField(
-                  controller: _mobile,
-                  keyboardType: TextInputType.phone,
-                  autofillHints: const [AutofillHints.telephoneNumber],
-                  decoration: const InputDecoration(
-                    labelText: 'Mobile number',
-                    helperText:
-                        'Use international format, for example +639171234567.',
-                  ),
-                  validator: (value) =>
-                      RegExp(r'^\+[1-9]\d{7,14}$').hasMatch(value?.trim() ?? '')
-                      ? null
-                      : 'Enter a valid international mobile number.',
+                PhoneNumberField(
+                  enabled: !_submitting,
+                  onChanged: (value) => _mobile = value,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue: _buyerType,
                   decoration: const InputDecoration(labelText: 'Buyer type'),
                   items: const [

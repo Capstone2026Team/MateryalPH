@@ -1,0 +1,1230 @@
+{
+  "source": "https://raw.githubusercontent.com/google/libphonenumber/cef6ae1479b50a20bd96f9092c545e8bc9ce7760/resources/PhoneNumberMetadata.xml",
+  "countries": [
+    {
+      "region": "AC",
+      "callingCode": "247",
+      "mainCountry": false
+    },
+    {
+      "region": "AD",
+      "callingCode": "376",
+      "mainCountry": false
+    },
+    {
+      "region": "AE",
+      "callingCode": "971",
+      "mainCountry": false
+    },
+    {
+      "region": "AF",
+      "callingCode": "93",
+      "mainCountry": false
+    },
+    {
+      "region": "AG",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "AI",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "AL",
+      "callingCode": "355",
+      "mainCountry": false
+    },
+    {
+      "region": "AM",
+      "callingCode": "374",
+      "mainCountry": false
+    },
+    {
+      "region": "AO",
+      "callingCode": "244",
+      "mainCountry": false
+    },
+    {
+      "region": "AR",
+      "callingCode": "54",
+      "mainCountry": false
+    },
+    {
+      "region": "AS",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "AT",
+      "callingCode": "43",
+      "mainCountry": false
+    },
+    {
+      "region": "AU",
+      "callingCode": "61",
+      "mainCountry": true
+    },
+    {
+      "region": "AW",
+      "callingCode": "297",
+      "mainCountry": false
+    },
+    {
+      "region": "AX",
+      "callingCode": "358",
+      "mainCountry": false
+    },
+    {
+      "region": "AZ",
+      "callingCode": "994",
+      "mainCountry": false
+    },
+    {
+      "region": "BA",
+      "callingCode": "387",
+      "mainCountry": false
+    },
+    {
+      "region": "BB",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "BD",
+      "callingCode": "880",
+      "mainCountry": false
+    },
+    {
+      "region": "BE",
+      "callingCode": "32",
+      "mainCountry": false
+    },
+    {
+      "region": "BF",
+      "callingCode": "226",
+      "mainCountry": false
+    },
+    {
+      "region": "BG",
+      "callingCode": "359",
+      "mainCountry": false
+    },
+    {
+      "region": "BH",
+      "callingCode": "973",
+      "mainCountry": false
+    },
+    {
+      "region": "BI",
+      "callingCode": "257",
+      "mainCountry": false
+    },
+    {
+      "region": "BJ",
+      "callingCode": "229",
+      "mainCountry": false
+    },
+    {
+      "region": "BL",
+      "callingCode": "590",
+      "mainCountry": false
+    },
+    {
+      "region": "BM",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "BN",
+      "callingCode": "673",
+      "mainCountry": false
+    },
+    {
+      "region": "BO",
+      "callingCode": "591",
+      "mainCountry": false
+    },
+    {
+      "region": "BQ",
+      "callingCode": "599",
+      "mainCountry": false
+    },
+    {
+      "region": "BR",
+      "callingCode": "55",
+      "mainCountry": false
+    },
+    {
+      "region": "BS",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "BT",
+      "callingCode": "975",
+      "mainCountry": false
+    },
+    {
+      "region": "BW",
+      "callingCode": "267",
+      "mainCountry": false
+    },
+    {
+      "region": "BY",
+      "callingCode": "375",
+      "mainCountry": false
+    },
+    {
+      "region": "BZ",
+      "callingCode": "501",
+      "mainCountry": false
+    },
+    {
+      "region": "CA",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "CC",
+      "callingCode": "61",
+      "mainCountry": false
+    },
+    {
+      "region": "CD",
+      "callingCode": "243",
+      "mainCountry": false
+    },
+    {
+      "region": "CF",
+      "callingCode": "236",
+      "mainCountry": false
+    },
+    {
+      "region": "CG",
+      "callingCode": "242",
+      "mainCountry": false
+    },
+    {
+      "region": "CH",
+      "callingCode": "41",
+      "mainCountry": false
+    },
+    {
+      "region": "CI",
+      "callingCode": "225",
+      "mainCountry": false
+    },
+    {
+      "region": "CK",
+      "callingCode": "682",
+      "mainCountry": false
+    },
+    {
+      "region": "CL",
+      "callingCode": "56",
+      "mainCountry": false
+    },
+    {
+      "region": "CM",
+      "callingCode": "237",
+      "mainCountry": false
+    },
+    {
+      "region": "CN",
+      "callingCode": "86",
+      "mainCountry": false
+    },
+    {
+      "region": "CO",
+      "callingCode": "57",
+      "mainCountry": false
+    },
+    {
+      "region": "CR",
+      "callingCode": "506",
+      "mainCountry": false
+    },
+    {
+      "region": "CU",
+      "callingCode": "53",
+      "mainCountry": false
+    },
+    {
+      "region": "CV",
+      "callingCode": "238",
+      "mainCountry": false
+    },
+    {
+      "region": "CW",
+      "callingCode": "599",
+      "mainCountry": true
+    },
+    {
+      "region": "CX",
+      "callingCode": "61",
+      "mainCountry": false
+    },
+    {
+      "region": "CY",
+      "callingCode": "357",
+      "mainCountry": false
+    },
+    {
+      "region": "CZ",
+      "callingCode": "420",
+      "mainCountry": false
+    },
+    {
+      "region": "DE",
+      "callingCode": "49",
+      "mainCountry": false
+    },
+    {
+      "region": "DJ",
+      "callingCode": "253",
+      "mainCountry": false
+    },
+    {
+      "region": "DK",
+      "callingCode": "45",
+      "mainCountry": false
+    },
+    {
+      "region": "DM",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "DO",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "DZ",
+      "callingCode": "213",
+      "mainCountry": false
+    },
+    {
+      "region": "EC",
+      "callingCode": "593",
+      "mainCountry": false
+    },
+    {
+      "region": "EE",
+      "callingCode": "372",
+      "mainCountry": false
+    },
+    {
+      "region": "EG",
+      "callingCode": "20",
+      "mainCountry": false
+    },
+    {
+      "region": "EH",
+      "callingCode": "212",
+      "mainCountry": false
+    },
+    {
+      "region": "ER",
+      "callingCode": "291",
+      "mainCountry": false
+    },
+    {
+      "region": "ES",
+      "callingCode": "34",
+      "mainCountry": false
+    },
+    {
+      "region": "ET",
+      "callingCode": "251",
+      "mainCountry": false
+    },
+    {
+      "region": "FI",
+      "callingCode": "358",
+      "mainCountry": true
+    },
+    {
+      "region": "FJ",
+      "callingCode": "679",
+      "mainCountry": false
+    },
+    {
+      "region": "FK",
+      "callingCode": "500",
+      "mainCountry": false
+    },
+    {
+      "region": "FM",
+      "callingCode": "691",
+      "mainCountry": false
+    },
+    {
+      "region": "FO",
+      "callingCode": "298",
+      "mainCountry": false
+    },
+    {
+      "region": "FR",
+      "callingCode": "33",
+      "mainCountry": false
+    },
+    {
+      "region": "GA",
+      "callingCode": "241",
+      "mainCountry": false
+    },
+    {
+      "region": "GB",
+      "callingCode": "44",
+      "mainCountry": true
+    },
+    {
+      "region": "GD",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "GE",
+      "callingCode": "995",
+      "mainCountry": false
+    },
+    {
+      "region": "GF",
+      "callingCode": "594",
+      "mainCountry": false
+    },
+    {
+      "region": "GG",
+      "callingCode": "44",
+      "mainCountry": false
+    },
+    {
+      "region": "GH",
+      "callingCode": "233",
+      "mainCountry": false
+    },
+    {
+      "region": "GI",
+      "callingCode": "350",
+      "mainCountry": false
+    },
+    {
+      "region": "GL",
+      "callingCode": "299",
+      "mainCountry": false
+    },
+    {
+      "region": "GM",
+      "callingCode": "220",
+      "mainCountry": false
+    },
+    {
+      "region": "GN",
+      "callingCode": "224",
+      "mainCountry": false
+    },
+    {
+      "region": "GP",
+      "callingCode": "590",
+      "mainCountry": true
+    },
+    {
+      "region": "GQ",
+      "callingCode": "240",
+      "mainCountry": false
+    },
+    {
+      "region": "GR",
+      "callingCode": "30",
+      "mainCountry": false
+    },
+    {
+      "region": "GT",
+      "callingCode": "502",
+      "mainCountry": false
+    },
+    {
+      "region": "GU",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "GW",
+      "callingCode": "245",
+      "mainCountry": false
+    },
+    {
+      "region": "GY",
+      "callingCode": "592",
+      "mainCountry": false
+    },
+    {
+      "region": "HK",
+      "callingCode": "852",
+      "mainCountry": false
+    },
+    {
+      "region": "HN",
+      "callingCode": "504",
+      "mainCountry": false
+    },
+    {
+      "region": "HR",
+      "callingCode": "385",
+      "mainCountry": false
+    },
+    {
+      "region": "HT",
+      "callingCode": "509",
+      "mainCountry": false
+    },
+    {
+      "region": "HU",
+      "callingCode": "36",
+      "mainCountry": false
+    },
+    {
+      "region": "ID",
+      "callingCode": "62",
+      "mainCountry": false
+    },
+    {
+      "region": "IE",
+      "callingCode": "353",
+      "mainCountry": false
+    },
+    {
+      "region": "IL",
+      "callingCode": "972",
+      "mainCountry": false
+    },
+    {
+      "region": "IM",
+      "callingCode": "44",
+      "mainCountry": false
+    },
+    {
+      "region": "IN",
+      "callingCode": "91",
+      "mainCountry": false
+    },
+    {
+      "region": "IO",
+      "callingCode": "246",
+      "mainCountry": false
+    },
+    {
+      "region": "IQ",
+      "callingCode": "964",
+      "mainCountry": false
+    },
+    {
+      "region": "IR",
+      "callingCode": "98",
+      "mainCountry": false
+    },
+    {
+      "region": "IS",
+      "callingCode": "354",
+      "mainCountry": false
+    },
+    {
+      "region": "IT",
+      "callingCode": "39",
+      "mainCountry": true
+    },
+    {
+      "region": "JE",
+      "callingCode": "44",
+      "mainCountry": false
+    },
+    {
+      "region": "JM",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "JO",
+      "callingCode": "962",
+      "mainCountry": false
+    },
+    {
+      "region": "JP",
+      "callingCode": "81",
+      "mainCountry": false
+    },
+    {
+      "region": "KE",
+      "callingCode": "254",
+      "mainCountry": false
+    },
+    {
+      "region": "KG",
+      "callingCode": "996",
+      "mainCountry": false
+    },
+    {
+      "region": "KH",
+      "callingCode": "855",
+      "mainCountry": false
+    },
+    {
+      "region": "KI",
+      "callingCode": "686",
+      "mainCountry": false
+    },
+    {
+      "region": "KM",
+      "callingCode": "269",
+      "mainCountry": false
+    },
+    {
+      "region": "KN",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "KP",
+      "callingCode": "850",
+      "mainCountry": false
+    },
+    {
+      "region": "KR",
+      "callingCode": "82",
+      "mainCountry": false
+    },
+    {
+      "region": "KW",
+      "callingCode": "965",
+      "mainCountry": false
+    },
+    {
+      "region": "KY",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "KZ",
+      "callingCode": "7",
+      "mainCountry": false
+    },
+    {
+      "region": "LA",
+      "callingCode": "856",
+      "mainCountry": false
+    },
+    {
+      "region": "LB",
+      "callingCode": "961",
+      "mainCountry": false
+    },
+    {
+      "region": "LC",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "LI",
+      "callingCode": "423",
+      "mainCountry": false
+    },
+    {
+      "region": "LK",
+      "callingCode": "94",
+      "mainCountry": false
+    },
+    {
+      "region": "LR",
+      "callingCode": "231",
+      "mainCountry": false
+    },
+    {
+      "region": "LS",
+      "callingCode": "266",
+      "mainCountry": false
+    },
+    {
+      "region": "LT",
+      "callingCode": "370",
+      "mainCountry": false
+    },
+    {
+      "region": "LU",
+      "callingCode": "352",
+      "mainCountry": false
+    },
+    {
+      "region": "LV",
+      "callingCode": "371",
+      "mainCountry": false
+    },
+    {
+      "region": "LY",
+      "callingCode": "218",
+      "mainCountry": false
+    },
+    {
+      "region": "MA",
+      "callingCode": "212",
+      "mainCountry": true
+    },
+    {
+      "region": "MC",
+      "callingCode": "377",
+      "mainCountry": false
+    },
+    {
+      "region": "MD",
+      "callingCode": "373",
+      "mainCountry": false
+    },
+    {
+      "region": "ME",
+      "callingCode": "382",
+      "mainCountry": false
+    },
+    {
+      "region": "MF",
+      "callingCode": "590",
+      "mainCountry": false
+    },
+    {
+      "region": "MG",
+      "callingCode": "261",
+      "mainCountry": false
+    },
+    {
+      "region": "MH",
+      "callingCode": "692",
+      "mainCountry": false
+    },
+    {
+      "region": "MK",
+      "callingCode": "389",
+      "mainCountry": false
+    },
+    {
+      "region": "ML",
+      "callingCode": "223",
+      "mainCountry": false
+    },
+    {
+      "region": "MM",
+      "callingCode": "95",
+      "mainCountry": false
+    },
+    {
+      "region": "MN",
+      "callingCode": "976",
+      "mainCountry": false
+    },
+    {
+      "region": "MO",
+      "callingCode": "853",
+      "mainCountry": false
+    },
+    {
+      "region": "MP",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "MQ",
+      "callingCode": "596",
+      "mainCountry": false
+    },
+    {
+      "region": "MR",
+      "callingCode": "222",
+      "mainCountry": false
+    },
+    {
+      "region": "MS",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "MT",
+      "callingCode": "356",
+      "mainCountry": false
+    },
+    {
+      "region": "MU",
+      "callingCode": "230",
+      "mainCountry": false
+    },
+    {
+      "region": "MV",
+      "callingCode": "960",
+      "mainCountry": false
+    },
+    {
+      "region": "MW",
+      "callingCode": "265",
+      "mainCountry": false
+    },
+    {
+      "region": "MX",
+      "callingCode": "52",
+      "mainCountry": false
+    },
+    {
+      "region": "MY",
+      "callingCode": "60",
+      "mainCountry": false
+    },
+    {
+      "region": "MZ",
+      "callingCode": "258",
+      "mainCountry": false
+    },
+    {
+      "region": "NA",
+      "callingCode": "264",
+      "mainCountry": false
+    },
+    {
+      "region": "NC",
+      "callingCode": "687",
+      "mainCountry": false
+    },
+    {
+      "region": "NE",
+      "callingCode": "227",
+      "mainCountry": false
+    },
+    {
+      "region": "NF",
+      "callingCode": "672",
+      "mainCountry": false
+    },
+    {
+      "region": "NG",
+      "callingCode": "234",
+      "mainCountry": false
+    },
+    {
+      "region": "NI",
+      "callingCode": "505",
+      "mainCountry": false
+    },
+    {
+      "region": "NL",
+      "callingCode": "31",
+      "mainCountry": false
+    },
+    {
+      "region": "NO",
+      "callingCode": "47",
+      "mainCountry": true
+    },
+    {
+      "region": "NP",
+      "callingCode": "977",
+      "mainCountry": false
+    },
+    {
+      "region": "NR",
+      "callingCode": "674",
+      "mainCountry": false
+    },
+    {
+      "region": "NU",
+      "callingCode": "683",
+      "mainCountry": false
+    },
+    {
+      "region": "NZ",
+      "callingCode": "64",
+      "mainCountry": false
+    },
+    {
+      "region": "OM",
+      "callingCode": "968",
+      "mainCountry": false
+    },
+    {
+      "region": "PA",
+      "callingCode": "507",
+      "mainCountry": false
+    },
+    {
+      "region": "PE",
+      "callingCode": "51",
+      "mainCountry": false
+    },
+    {
+      "region": "PF",
+      "callingCode": "689",
+      "mainCountry": false
+    },
+    {
+      "region": "PG",
+      "callingCode": "675",
+      "mainCountry": false
+    },
+    {
+      "region": "PH",
+      "callingCode": "63",
+      "mainCountry": false
+    },
+    {
+      "region": "PK",
+      "callingCode": "92",
+      "mainCountry": false
+    },
+    {
+      "region": "PL",
+      "callingCode": "48",
+      "mainCountry": false
+    },
+    {
+      "region": "PM",
+      "callingCode": "508",
+      "mainCountry": false
+    },
+    {
+      "region": "PR",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "PS",
+      "callingCode": "970",
+      "mainCountry": false
+    },
+    {
+      "region": "PT",
+      "callingCode": "351",
+      "mainCountry": false
+    },
+    {
+      "region": "PW",
+      "callingCode": "680",
+      "mainCountry": false
+    },
+    {
+      "region": "PY",
+      "callingCode": "595",
+      "mainCountry": false
+    },
+    {
+      "region": "QA",
+      "callingCode": "974",
+      "mainCountry": false
+    },
+    {
+      "region": "RE",
+      "callingCode": "262",
+      "mainCountry": true
+    },
+    {
+      "region": "RO",
+      "callingCode": "40",
+      "mainCountry": false
+    },
+    {
+      "region": "RS",
+      "callingCode": "381",
+      "mainCountry": false
+    },
+    {
+      "region": "RU",
+      "callingCode": "7",
+      "mainCountry": true
+    },
+    {
+      "region": "RW",
+      "callingCode": "250",
+      "mainCountry": false
+    },
+    {
+      "region": "SA",
+      "callingCode": "966",
+      "mainCountry": false
+    },
+    {
+      "region": "SB",
+      "callingCode": "677",
+      "mainCountry": false
+    },
+    {
+      "region": "SC",
+      "callingCode": "248",
+      "mainCountry": false
+    },
+    {
+      "region": "SD",
+      "callingCode": "249",
+      "mainCountry": false
+    },
+    {
+      "region": "SE",
+      "callingCode": "46",
+      "mainCountry": false
+    },
+    {
+      "region": "SG",
+      "callingCode": "65",
+      "mainCountry": false
+    },
+    {
+      "region": "SH",
+      "callingCode": "290",
+      "mainCountry": true
+    },
+    {
+      "region": "SI",
+      "callingCode": "386",
+      "mainCountry": false
+    },
+    {
+      "region": "SJ",
+      "callingCode": "47",
+      "mainCountry": false
+    },
+    {
+      "region": "SK",
+      "callingCode": "421",
+      "mainCountry": false
+    },
+    {
+      "region": "SL",
+      "callingCode": "232",
+      "mainCountry": false
+    },
+    {
+      "region": "SM",
+      "callingCode": "378",
+      "mainCountry": false
+    },
+    {
+      "region": "SN",
+      "callingCode": "221",
+      "mainCountry": false
+    },
+    {
+      "region": "SO",
+      "callingCode": "252",
+      "mainCountry": false
+    },
+    {
+      "region": "SR",
+      "callingCode": "597",
+      "mainCountry": false
+    },
+    {
+      "region": "SS",
+      "callingCode": "211",
+      "mainCountry": false
+    },
+    {
+      "region": "ST",
+      "callingCode": "239",
+      "mainCountry": false
+    },
+    {
+      "region": "SV",
+      "callingCode": "503",
+      "mainCountry": false
+    },
+    {
+      "region": "SX",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "SY",
+      "callingCode": "963",
+      "mainCountry": false
+    },
+    {
+      "region": "SZ",
+      "callingCode": "268",
+      "mainCountry": false
+    },
+    {
+      "region": "TA",
+      "callingCode": "290",
+      "mainCountry": false
+    },
+    {
+      "region": "TC",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "TD",
+      "callingCode": "235",
+      "mainCountry": false
+    },
+    {
+      "region": "TG",
+      "callingCode": "228",
+      "mainCountry": false
+    },
+    {
+      "region": "TH",
+      "callingCode": "66",
+      "mainCountry": false
+    },
+    {
+      "region": "TJ",
+      "callingCode": "992",
+      "mainCountry": false
+    },
+    {
+      "region": "TK",
+      "callingCode": "690",
+      "mainCountry": false
+    },
+    {
+      "region": "TL",
+      "callingCode": "670",
+      "mainCountry": false
+    },
+    {
+      "region": "TM",
+      "callingCode": "993",
+      "mainCountry": false
+    },
+    {
+      "region": "TN",
+      "callingCode": "216",
+      "mainCountry": false
+    },
+    {
+      "region": "TO",
+      "callingCode": "676",
+      "mainCountry": false
+    },
+    {
+      "region": "TR",
+      "callingCode": "90",
+      "mainCountry": false
+    },
+    {
+      "region": "TT",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "TV",
+      "callingCode": "688",
+      "mainCountry": false
+    },
+    {
+      "region": "TW",
+      "callingCode": "886",
+      "mainCountry": false
+    },
+    {
+      "region": "TZ",
+      "callingCode": "255",
+      "mainCountry": false
+    },
+    {
+      "region": "UA",
+      "callingCode": "380",
+      "mainCountry": false
+    },
+    {
+      "region": "UG",
+      "callingCode": "256",
+      "mainCountry": false
+    },
+    {
+      "region": "US",
+      "callingCode": "1",
+      "mainCountry": true
+    },
+    {
+      "region": "UY",
+      "callingCode": "598",
+      "mainCountry": false
+    },
+    {
+      "region": "UZ",
+      "callingCode": "998",
+      "mainCountry": false
+    },
+    {
+      "region": "VA",
+      "callingCode": "39",
+      "mainCountry": false
+    },
+    {
+      "region": "VC",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "VE",
+      "callingCode": "58",
+      "mainCountry": false
+    },
+    {
+      "region": "VG",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "VI",
+      "callingCode": "1",
+      "mainCountry": false
+    },
+    {
+      "region": "VN",
+      "callingCode": "84",
+      "mainCountry": false
+    },
+    {
+      "region": "VU",
+      "callingCode": "678",
+      "mainCountry": false
+    },
+    {
+      "region": "WF",
+      "callingCode": "681",
+      "mainCountry": false
+    },
+    {
+      "region": "WS",
+      "callingCode": "685",
+      "mainCountry": false
+    },
+    {
+      "region": "XK",
+      "callingCode": "383",
+      "mainCountry": false
+    },
+    {
+      "region": "YE",
+      "callingCode": "967",
+      "mainCountry": false
+    },
+    {
+      "region": "YT",
+      "callingCode": "262",
+      "mainCountry": false
+    },
+    {
+      "region": "ZA",
+      "callingCode": "27",
+      "mainCountry": false
+    },
+    {
+      "region": "ZM",
+      "callingCode": "260",
+      "mainCountry": false
+    },
+    {
+      "region": "ZW",
+      "callingCode": "263",
+      "mainCountry": false
+    }
+  ]
+}

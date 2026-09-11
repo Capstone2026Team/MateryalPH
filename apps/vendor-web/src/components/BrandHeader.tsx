@@ -18,9 +18,9 @@ export function BrandHeader() {
     <header className="site-header">
       <a className="skip-link" href="#main-content">Skip to content</a>
       <div className="site-header__inner">
-        <Link className="brand-link" to="/" aria-label="MateryalPH Vendor Portal home">
-          <img src="/brand/materyalph-logo.png" alt="MateryalPH" width="154" height="80" />
-          <span>Vendor Portal</span>
+        <Link className="brand-link" to="/" aria-label="MaterialPH Vendor home">
+          <img src="/brand/materyalph-mark.png" alt="MateryalPH" width="48" height="48" />
+          <span>MaterialPH Vendor</span>
         </Link>
         <button className="menu-button" type="button" aria-expanded={open} aria-controls="site-navigation" onClick={() => setOpen((value) => !value)}>
           {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}

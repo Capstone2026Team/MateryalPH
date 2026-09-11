@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../widgets/auth_content.dart';
 import 'package:flutter/services.dart';
 
 import '../auth/auth_repository.dart';
@@ -26,6 +28,8 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   final _code = TextEditingController();
   final _password = TextEditingController();
   bool _codeRequested = false;
+  bool _resetComplete = false;
+  bool _messageIsError = false;
   bool _submitting = false;
   bool _obscurePassword = true;
   String? _message;
@@ -43,6 +47,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     setState(() {
       _submitting = true;
       _message = null;
+      _messageIsError = false;
     });
     try {
       if (!_codeRequested) {
@@ -63,7 +68,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           code: _code.text,
           password: _password.text,
         );
-        if (mounted) widget.onComplete();
+        if (mounted) setState(() => _resetComplete = true);
       }
     } on BuyerRiskChallenge catch (challenge) {
       if (!mounted) return;
@@ -75,9 +80,19 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       );
       if (mounted && token != null) await _submit(proof: token);
     } on StateError catch (error) {
-      if (mounted) setState(() => _message = error.message);
+      if (mounted) {
+        setState(() {
+          _message = error.message;
+          _messageIsError = true;
+        });
+      }
     } on BuyerAuthException catch (error) {
-      if (mounted) setState(() => _message = error.message);
+      if (mounted) {
+        setState(() {
+          _message = error.message;
+          _messageIsError = true;
+        });
+      }
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -85,6 +100,36 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_resetComplete) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Password updated')),
+        body: SafeArea(
+          child: AuthContent(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(Icons.check_circle_outline, size: 56),
+                const SizedBox(height: 24),
+                Text(
+                  'A fresh start',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 16),
+                const AuthNotice(
+                  message:
+                      'Your password has been updated. Sign in with your new password to continue.',
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: widget.onComplete,
+                  child: const Text('Back to sign in'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -96,7 +141,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: AuthContent(
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
@@ -182,10 +227,21 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    obscureText: _obscurePassword,
+                    autofillHints: const [AutofillHints.newPassword],
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm new password',
+                    ),
+                    validator: (value) => value == _password.text
+                        ? null
+                        : 'Passwords do not match.',
+                  ),
                 ],
                 if (_message != null) ...[
                   const SizedBox(height: 16),
-                  Semantics(liveRegion: true, child: Text(_message!)),
+                  AuthNotice(message: _message!, isError: _messageIsError),
                 ],
                 const SizedBox(height: 24),
                 FilledButton(

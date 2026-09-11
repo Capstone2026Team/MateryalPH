@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import '../widgets/auth_content.dart';
 import 'package:flutter/services.dart';
 
 import '../auth/auth_repository.dart';
@@ -134,7 +136,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: AuthContent(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
           child: Form(
             key: _formKey,
@@ -170,7 +172,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   maxLength: 6,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    letterSpacing: 12,
+                    letterSpacing:
+                        MediaQuery.textScalerOf(context).scale(1) > 1.5 ? 2 : 8,
                     fontWeight: FontWeight.w700,
                   ),
                   decoration: const InputDecoration(

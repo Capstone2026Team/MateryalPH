@@ -12,6 +12,8 @@ void main() {
       // TODO
     });
 
+    // Browser requests accepting text/html receive a safe branded error page on callback failure. JSON requests retain the canonical error envelope. No callback parameters are reflected into the HTML page.
+    //
     //Future completeGoogleOidc(String state, String code) async
     test('test completeGoogleOidc', () async {
       // TODO

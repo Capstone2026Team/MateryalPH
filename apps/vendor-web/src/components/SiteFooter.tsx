@@ -5,8 +5,8 @@ export function SiteFooter() {
     <footer>
       <div>
         <Link className="brand-link" to="/">
-          <img src="/brand/materyalph-logo.png" alt="MateryalPH" />
-          <span>Vendor Portal</span>
+          <img src="/brand/materyalph-mark.png" alt="MateryalPH" />
+          <span>MaterialPH Vendor</span>
         </Link>
         <p>Verified materials commerce for the Philippine construction community.</p>
       </div>
@@ -17,7 +17,7 @@ export function SiteFooter() {
         <Link to="/legal/terms-of-service">Terms</Link>
         <Link to="/legal/privacy-notice">Privacy</Link>
       </nav>
-      <small>Phase 1 capstone environment · Live commerce disabled</small>
+      <small>MateryalPH · Built for the Philippine construction community.</small>
     </footer>
   )
 }

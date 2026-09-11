@@ -1,4 +1,4 @@
-import { Button, Field, StatusMessage } from '@materyalph/web-ui'
+import { Button, Field, PhoneField, StatusMessage } from '@materyalph/web-ui'
 import { ArrowRight } from 'lucide-react'
 import { type FormEvent, type ReactNode, useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Link, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom'
@@ -92,24 +92,31 @@ function LoginPage() {
     }
   }
 
-  const successMessage = searchParams.get('verified') === 'success'
+  async function googleSignIn() {
+    setBusy(true)
+    setMessage(null)
+    try { await startGoogleSignIn() }
+    catch (error) { setMessage(await readableApiError(error)); setBusy(false) }
+  }
+
+  const successMessage = searchParams.get('logout') === 'success' ? 'You have signed out securely.' : searchParams.get('verified') === 'success'
     ? 'Email verified. You can now sign in.'
     : searchParams.get('reset') === 'success'
       ? 'Password updated. Sign in with your new password.'
       : null
 
   return (
-    <VendorAuthShell title="Welcome back" description="Sign in to operate your verified store.">
+    <VendorAuthShell title="Welcome back" description="Sign in to your Vendor account. Store activation is reviewed separately.">
       {challenge && pending
         ? <RiskOtpPanel challenge={challenge} email={pending.email} onCancel={() => { setChallenge(null); setPending(null) }} onVerified={() => attempt(pending, true)} />
         : <form className="auth-form" onSubmit={submit}>
             {successMessage && <StatusMessage tone="success">{successMessage}</StatusMessage>}
             {message && <StatusMessage tone="error">{message}</StatusMessage>}
-            <Button className="w-full" variant="secondary" onClick={() => void startGoogleSignIn()} disabled={busy}>Continue with Google</Button>
+            <Button className="w-full" variant="secondary" onClick={() => void googleSignIn()} disabled={busy}>Continue with Google</Button>
             <div className="auth-divider"><span>or sign in with email</span></div>
             <Field label="Email address" name="email" type="email" autoComplete="email" required />
             <Field label="Password" name="password" type="password" autoComplete="current-password" required />
-            <div className="form-row"><span>Access is protected by secure cookies.</span><Link to="/forgot-password">Forgot password?</Link></div>
+            <div className="form-row"><span>Your account, securely accessed.</span><Link to="/forgot-password">Forgot password?</Link></div>
             <button className="accessible-fallback" type="button" aria-pressed={useEmailCheck} onClick={() => { captchaRef.current?.reset(); setUseEmailCheck((value) => !value) }}>{useEmailCheck ? 'Email security check selected' : 'Use an email security check instead'}</button>
             {!useEmailCheck && <VendorRecaptchaCheckbox ref={captchaRef} action="vendor_login" disabled={busy} onTokenChange={setCaptchaToken} />}
             <Button className="w-full" type="submit" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'} <ArrowRight aria-hidden="true" /></Button>
@@ -214,7 +221,7 @@ function RegisterPage() {
             <Field error={fieldError('full_name')} label="Owner full name" name="full_name" autoComplete="name" maxLength={160} onChange={() => clearFieldErrors('full_name')} required />
             <Field error={fieldError('business_name')} label="Business or store name" name="business_name" autoComplete="organization" maxLength={180} onChange={() => clearFieldErrors('business_name')} required />
             <Field error={fieldError('email')} label="Email address" name="email" type="email" autoComplete="email" onChange={() => clearFieldErrors('email')} required />
-            <Field error={fieldError('mobile_e164')} label="Mobile number" name="mobile" type="tel" autoComplete="tel" placeholder="+639171234567" pattern="\+[1-9][0-9]{7,14}" onChange={() => clearFieldErrors('mobile_e164')} required />
+            <PhoneField id="mobile" error={fieldError('mobile_e164')} label="Mobile number" name="mobile" onChange={() => clearFieldErrors('mobile_e164')} required />
             <Field error={fieldError('password')} label="Password" name="password" type="password" autoComplete="new-password" minLength={12} hint="At least 12 characters with uppercase, lowercase, and a number." onChange={() => clearFieldErrors('password', 'password_confirmation')} required />
             <Field error={fieldError('password_confirmation')} label="Confirm password" name="password_confirmation" type="password" autoComplete="new-password" minLength={12} onChange={() => clearFieldErrors('password_confirmation', 'password')} required />
             <div className="grid gap-2">
@@ -273,7 +280,7 @@ function InfoPage({ title, children }: { title: string; children: ReactNode }) {
 }
 
 function FeesContent() {
-  return <div className="info-copy"><p><strong>2% Vendor-paid monthly platform commission:</strong> assessed only on the approved completed-materials basis after Vendor discounts and excluding included materials VAT.</p><p>Buyer processing fees, Vendor commission liability, monthly settlement, withholding scenarios, refunds, and dispute adjustments remain separate records. Phase 1 uses TEST/DEMO finance configuration and does not enable live commerce.</p></div>
+  return <div className="info-copy"><p><strong>2% Vendor-paid monthly platform commission:</strong> assessed only on the approved completed-materials basis after Vendor discounts and excluding included materials VAT.</p><p>Buyer processing fees, Vendor commission liability, monthly settlement, withholding scenarios, refunds, and dispute adjustments remain separate records. Commission and processing fees are explained separately so you can understand each charge.</p></div>
 }
 
 function VerificationContent() {

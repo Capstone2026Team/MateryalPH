@@ -116,6 +116,8 @@ example().catch(console.error);
 
 
 
+Browser requests accepting text/html receive a safe branded error page on callback failure. JSON requests retain the canonical error envelope. No callback parameters are reflected into the HTML page.
+
 ### Example
 
 ```ts
@@ -167,14 +169,18 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: Not defined
-- **Accept**: `application/json`
+- **Accept**: `text/html`, `application/json`
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **302** | Validated OIDC redirect to a web portal with HttpOnly cookies, to the Buyer app with a two-minute one-time exchange code, or to an allowlisted web portal callback with a stable error code for an expected identity/access denial. |  -  |
-| **401** | Safe structured error with X-Correlation-ID response header. |  -  |
+| **401** | Safe callback failure; HTML for browser navigation and the canonical error envelope for JSON clients. |  -  |
+| **403** | Safe callback failure; HTML for browser navigation and the canonical error envelope for JSON clients. |  -  |
+| **404** | Safe callback failure; HTML for browser navigation and the canonical error envelope for JSON clients. |  -  |
+| **422** | Safe callback failure; HTML for browser navigation and the canonical error envelope for JSON clients. |  -  |
+| **503** | Safe callback failure; HTML for browser navigation and the canonical error envelope for JSON clients. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

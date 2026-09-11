@@ -1,3 +1,5 @@
 export { Button, type ButtonProps, type ButtonVariant } from './button'
 export { Field, type FieldProps } from './field'
 export { StatusMessage } from './status-message'
+export { PhoneField, type PhoneFieldProps } from './phone-field'
+export { PortalBrand } from './portal-brand'

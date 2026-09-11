@@ -86,6 +86,54 @@ void main() {
     },
   );
 
+  testWidgets(
+    'failed cold-start Google exchange shows a safe message on Welcome',
+    (tester) async {
+      final dio = Dio(BaseOptions(baseUrl: 'https://api.invalid'));
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) => handler.reject(
+            DioException(
+              requestOptions: options,
+              response: Response(
+                requestOptions: options,
+                statusCode: 403,
+                data: {
+                  'errors': [
+                    {
+                      'code': 'PORTAL_ACCESS_DENIED',
+                      'message': 'private provider detail',
+                    },
+                  ],
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(
+        BuyerApp(
+          authRepository: AuthRepository(
+            tokenStore: _MemoryTokenStore(),
+            apiClient: MateryalphApiClient(dio: dio),
+          ),
+          onboardingRepository: _MemoryOnboardingRepository(complete: true),
+          deepLinkSource: _MemoryDeepLinkSource(
+            Uri.parse('materyalph://auth/callback?exchange_code=test-exchange'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Welcome to'), findsOneWidget);
+      expect(
+        find.textContaining('Use a different Google account'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('private provider detail'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('first unauthenticated launch opens three-step onboarding', (
     tester,
   ) async {
@@ -167,6 +215,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.ensureVisible(find.text('Already have an account? Sign in'));
     await tester.tap(find.text('Already have an account? Sign in'));
     await tester.pumpAndSettle();
     expect(find.text('Login to your account'), findsOneWidget);
@@ -175,6 +224,7 @@ void main() {
 
     await tester.tap(find.byTooltip('Back'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Create buyer account'));
     await tester.tap(find.text('Create buyer account'));
     await tester.pumpAndSettle();
     expect(find.text('Start sourcing with confidence'), findsOneWidget);
@@ -203,8 +253,10 @@ void main() {
 }
 
 final class _MemoryDeepLinkSource implements DeepLinkSource {
+  _MemoryDeepLinkSource([this.initialLink]);
+  final Uri? initialLink;
   @override
-  Future<Uri?> getInitialLink() async => null;
+  Future<Uri?> getInitialLink() async => initialLink;
 
   @override
   Stream<Uri> get links => const Stream.empty();

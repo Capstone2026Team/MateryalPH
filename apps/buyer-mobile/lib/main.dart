@@ -52,6 +52,7 @@ enum _AppStage {
 }
 
 class _BuyerAppState extends State<BuyerApp> {
+  final _messengerKey = GlobalKey<ScaffoldMessengerState>();
   late final AuthRepository _authRepository;
   late final OnboardingRepository _onboardingRepository;
   late final DeepLinkSource _deepLinkSource;
@@ -136,6 +137,13 @@ class _BuyerAppState extends State<BuyerApp> {
       }
     } on BuyerAuthException catch (error) {
       if (context.mounted) _showMessage(context, error.message);
+    } catch (_) {
+      if (context.mounted) {
+        _showMessage(
+          context,
+          'Google sign-in could not be opened. Try again or use email sign-in.',
+        );
+      }
     }
   }
 
@@ -164,14 +172,13 @@ class _BuyerAppState extends State<BuyerApp> {
   }
 
   void _showMessage(BuildContext context, String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    _messengerKey.currentState?.showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: _messengerKey,
       title: 'MateryalPH Buyer',
       debugShowCheckedModeBanner: false,
       theme: BuyerTheme.light,
@@ -206,6 +213,7 @@ class _BuyerAppState extends State<BuyerApp> {
         );
       case _AppStage.login:
         return LoginScreen(
+          onGoogle: () => _startGoogleSignIn(context),
           authRepository: _authRepository,
           onAuthenticated: () => setState(() => _stage = _AppStage.home),
           onRegister: () => setState(() => _stage = _AppStage.register),

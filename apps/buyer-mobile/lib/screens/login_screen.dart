@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/auth_content.dart';
+
 import '../auth/auth_repository.dart';
 import '../design_system/theme.dart';
 import '../widgets/brand_lockup.dart';
@@ -13,6 +15,7 @@ class LoginScreen extends StatefulWidget {
     required this.onRegister,
     required this.onForgotPassword,
     required this.onBack,
+    this.onGoogle,
   });
 
   final AuthRepository authRepository;
@@ -20,6 +23,7 @@ class LoginScreen extends StatefulWidget {
   final VoidCallback onRegister;
   final VoidCallback onForgotPassword;
   final VoidCallback onBack;
+  final Future<void> Function()? onGoogle;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -83,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: SafeArea(
         top: false,
-        child: SingleChildScrollView(
+        child: AuthContent(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 28),
           child: Form(
             key: _formKey,
@@ -161,21 +165,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   if (_error != null) ...[
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(
-                        _error!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    ),
+                    AuthNotice(message: _error!, isError: true),
                     const SizedBox(height: 16),
                   ],
                   FilledButton(
                     onPressed: _submitting ? null : _submit,
                     child: Text(_submitting ? 'Signing in…' : 'Sign in'),
                   ),
+                  if (widget.onGoogle != null) ...[
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: _submitting
+                          ? null
+                          : () async {
+                              setState(() => _submitting = true);
+                              try {
+                                await widget.onGoogle!();
+                              } finally {
+                                if (mounted) {
+                                  setState(() => _submitting = false);
+                                }
+                              }
+                            },
+                      child: const Text('Continue with Google'),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: widget.onRegister,

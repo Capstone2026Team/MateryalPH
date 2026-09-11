@@ -15,6 +15,16 @@ describe('Admin authentication portal', () => {
     expect(screen.getByRole('button', { name: /sign in securely/i })).toBeEnabled()
   })
 
+  test('password visibility is accessible without submitting the form', () => {
+    render(<App />)
+    const field = screen.getByLabelText(/^Password/i, { selector: 'input' })
+    fireEvent.change(field, { target: { value: 'ExamplePassword123' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Show password' }))
+    expect(field).toHaveAttribute('type', 'text')
+    expect(field).toHaveValue('ExamplePassword123')
+    expect(screen.getByRole('button', { name: 'Hide password' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
   test('connects password recovery to a real route', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('link', { name: 'Forgot password?' }))

@@ -158,7 +158,7 @@ final class AuthRepository {
     } on BuyerAuthException {
       rethrow;
     } on DioException catch (error) {
-      throw BuyerAuthException(_messageFrom(error));
+      throw BuyerAuthException(_messageFrom(error, google: true));
     }
   }
 
@@ -171,7 +171,7 @@ final class AuthRepository {
       );
       await _saveTokens(response.data?.data);
     } on DioException catch (error) {
-      throw BuyerAuthException(_messageFrom(error));
+      throw BuyerAuthException(_messageFrom(error, google: true));
     }
   }
 
@@ -293,7 +293,7 @@ final class AuthRepository {
     _client.setBearerAuth('passportBearer', accessToken);
   }
 
-  String _messageFrom(DioException error) {
+  String _messageFrom(DioException error, {bool google = false}) {
     final body = error.response?.data;
     if (body is Map<String, dynamic>) {
       final errors = body['errors'];
@@ -309,6 +309,24 @@ final class AuthRepository {
           if (id is String && expiry is String && resend is int) {
             throw BuyerRiskChallenge(id, expiry, resend);
           }
+        }
+        if (google && first is Map) {
+          const messages = {
+            'PORTAL_ACCESS_DENIED':
+                'This Google account belongs to another MateryalPH account type. Use a different Google account for Buyer access.',
+            'ACCOUNT_NOT_FOUND':
+                'No Buyer account is linked to this Google account. Create a Buyer account or choose a different Google account.',
+            'OIDC_STATE_INVALID':
+                'This Google sign-in request expired. Start sign-in again.',
+            'OIDC_EXCHANGE_CODE_INVALID':
+                'This Google sign-in request expired. Start sign-in again.',
+            'OIDC_KEYS_UNAVAILABLE':
+                'Google sign-in is temporarily unavailable. Try again shortly or use email sign-in.',
+            'OIDC_NOT_CONFIGURED':
+                'Google sign-in is currently unavailable. Use email sign-in to continue.',
+          };
+          return messages[first['code']] ??
+              'Google sign-in could not finish. Try again or use email sign-in.';
         }
         if (first is Map && first['message'] is String) {
           return first['message'] as String;
